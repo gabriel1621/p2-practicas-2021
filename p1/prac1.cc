@@ -2,7 +2,7 @@
 #include <cstdlib> // Para rand(), srand() y atoi()
 
 using namespace std;
-
+/*Constantes*/
 const int KNAME=32;
 const int KENEMIES=5;
 const int KPOINTS=200;
@@ -13,7 +13,7 @@ struct Core{
   int defense;
   int hp;
 };
-
+/*define clases de enemigos*/
 enum Breed{
   AXOLOTL,
   TROLL,
@@ -37,43 +37,59 @@ struct Hero{
 };
 
 int rollDice(){   //funcion de dado
-  return rand()%KDICE+1;
+  return rand()%KDICE+1; //devuelve valores entre 1 y 20
 }
-
-
+/*declarar funciones*/
+int nombreheroe(){}
+int attack_defense(){}
 
 Hero createHero(){
-  int nombreheroe (){  //funcion nombre heroe
+  nombreheroe(Hero.name);{  //funcion nombre heroe
     cout << "Enter Hero name: \n ";
     cin >> Hero.name;
-    if Hero.name = "";{ //pruba de nombre vacio
-      cout "Error Worng Name \n";
-      createHero();
+    if (Hero.name = " ");{ //prueba de nombre vacio
+      cout << "Error Worng Name \n";
+      nombreheroe();
     }
-    else if (isalpha(Hero.name [1]){ //prueba valores alfanumericos
-      cout "Error Worng Name \n";
-      createHero();
+    else if (isalpha(Hero.name [0]));{ //prueba valores alfanumericos
+      cout << "Error Worng Name \n";
+      nombreheroe();
     }
+
   }
-  int attack_defense (ataque_defensa){ //funcion ataque y defensa
+  attack_defense();{ //funcion ataque y defensa
+    int ataque_defensa;
     cout << "Enter attack/defense \n";
     cin >> ataque_defensa;
       //trocear el parametro en dos valores enteros (%ataque/%defensa)
       //comprobar valores > 0
-    if (ataque+defesensa=100) {}  //comprobar que los dos valores suman 100
-    hero.Core.attack = (ataque/100)*200;
-    hero.Core.defense = (defensa/100)*200;
+/*    if (ataque+defesensa=100); { //comprobar que los dos valores suman 100
+      hero.Core.attack = (ataque/100)*200;
+      hero.Core.defense = (defensa/100)*200;
 
+    }  
+    else{ cout << "Error Worng Distribution"; attack_defense();}
+    */
   }
-  int health_point (){ //puntos de defensa
-    hero.core.hp = (hero.Core.defense*2)
-  }
+  Hero.core.hp = (hero.Core.defense*2);
   Hero.special = true;
   Hero.exp = 0;
   Hero.kills = 0;
 }
-
+/*
 Enemy createEnemy(){
+  switch (rollDice){
+    case rollDice <=6 :
+      AXOLOTL
+    case rollDice <=11 :
+      TROLL
+    case rollDice <=15 :
+      ORC
+    case rollDice <=18 :
+      HELLHOUND
+    case rollDice <=20 :
+      DRAGON
+  }
 }
 
 void fight(Hero &hero,Enemy &enemy){
@@ -90,6 +106,17 @@ void showMenu(){
        << "4- Report" << endl
        << "q- Quit" << endl
        << "Option: ";
+  cin >> opcion; 
+  switch (opcion){
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case "q":
+    default: 
+      cout << "Error Wrong Option \n";
+      showMenu()
+  }
 }
 
 int main(int argc,char *argv[]){
@@ -102,3 +129,4 @@ int main(int argc,char *argv[]){
     // Aquí vendrá todo tu código del "main"...
   }
 }
+*/
