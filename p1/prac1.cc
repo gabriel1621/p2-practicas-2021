@@ -40,55 +40,61 @@ int rollDice(){   //funcion de dado
   return rand()%KDICE+1; //devuelve valores entre 1 y 20
 }
 /*declarar funciones*/
-int nombreheroe(){}
-int attack_defense(){}
+int nombreheroe(Hero &name){};
+int attack_defense(){};
 
-Hero createHero(){
+Hero createHero(Hero &name ){
   nombreheroe(Hero.name);{  //funcion nombre heroe
     cout << "Enter Hero name: \n ";
     cin >> Hero.name;
     if (Hero.name = " ");{ //prueba de nombre vacio
       cout << "Error Worng Name \n";
       nombreheroe();
-    }
-    else if (isalpha(Hero.name [0]));{ //prueba valores alfanumericos
+    };
+    else (isalpha(Hero.name [0]));{ //prueba valores alfanumericos
       cout << "Error Worng Name \n";
       nombreheroe();
-    }
+    };
+    
 
-  }
+  }/*
   attack_defense();{ //funcion ataque y defensa
     int ataque_defensa;
     cout << "Enter attack/defense \n";
     cin >> ataque_defensa;
       //trocear el parametro en dos valores enteros (%ataque/%defensa)
       //comprobar valores > 0
-/*    if (ataque+defesensa=100); { //comprobar que los dos valores suman 100
+    if (ataque+defesensa=100); { //comprobar que los dos valores suman 100
       hero.Core.attack = (ataque/100)*200;
       hero.Core.defense = (defensa/100)*200;
 
     }  
     else{ cout << "Error Worng Distribution"; attack_defense();}
-    */
+    
   }
   Hero.core.hp = (hero.Core.defense*2);
   Hero.special = true;
   Hero.exp = 0;
   Hero.kills = 0;
 }
-/*
+
 Enemy createEnemy(){
   switch (rollDice){
-    case rollDice <=6 :
-      AXOLOTL
-    case rollDice <=11 :
-      TROLL
-    case rollDice <=15 :
-      ORC
-    case rollDice <=18 :
-      HELLHOUND
-    case rollDice <=20 :
-      DRAGON
+    if rollDice <=6 {
+      Enemy.name="AXOLOTL";}
+      
+    else rollDice <=11 {
+      Enemy.name="TROLL";}
+      
+    else rollDice <=15 {
+      Enemy.name="ORC";}
+      
+    else rollDice <=18 {
+      Enemy.name="HELLHOUND";}
+      
+    else rollDice <=20 {
+      Enemy.name="DRAGON";}
+      
   }
 }
 
