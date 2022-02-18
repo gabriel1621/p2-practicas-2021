@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib> // Para rand(), srand() y atoi()
+#include <cstring>
 
 using namespace std;
 /*Constantes*/
@@ -50,22 +51,30 @@ Hero createHero(){
   int error;
   int ataque, defensa;
   int ataquetotal, defensatotal;
+
   do{
-    cout << "Enter Hero name: \n ";
+    cout << "Enter Hero name:" << endl;
     cin >> nombre_Heore;
-    if (nombre_Heore == ""){ //prueba de nombre vacio
-      cout << "ERROR: Worng Name \n";
-      error = 1;
+    error = 0 ;
+    if ((isalnum(nombre_Heore[0]) == 0)){ //prueba valores alfanumericos
+      cout << "ERROR: Worng Name" << endl;
+      error = 2;
+
     }
-    else if ((isalnum(nombre_Heore[0]) == 0)){ //prueba valores alfanumericos
-      cout << "ERROR: Worng Name \n";
-      error = 1;
+    else if ((isalpha(nombre_Heore[0]) == 0)){ //prueba valores alfanumericos
+      cout << "ERROR: Worng Name" << endl;
+      error = 3;
     }
+    else if (long(nombre_Heore[KNAME]==1)){
+      cout << "ERROR: Worng Name" << endl;
+      error = 3;
+    }
+    
   
-  }while (error == 0 );
+  }while (error != 0 );
   do{ 
 
-  cout << "Enter attack/defense \n";
+  cout << "Enter attack/defense" << endl;
   ataque = cin.get();
   defensa = cin.get();
   
@@ -74,7 +83,7 @@ Hero createHero(){
       defensatotal = (defensa/100)*200;
 
     } 
-    else{ 
+    else { 
       cout << "Error Worng Distribution"; 
       ataque =0;
     }
@@ -89,42 +98,46 @@ Hero createHero(){
   hero.runaways = 3;
   return hero;
 }
-/*
-Enemy createEnemy(Enemy &enemy){
-  Enemy enemy
+
+Enemy createEnemy(){
+  Enemy enemy;
   int num_dado;
   num_dado = rollDice();
-    if num_dado <=6 {
-      cout  << "Breed: " << enemy.Breed= 1 << endl
-            << "Attack: " << enemy.features.attack= 40 << endl
-            << "Defense: " << enemy.features.defense= 40 << endl
-            << "Health points: " << enemy.features.hp = (hero.features.defense*2) << endl  }
+    if (num_dado <=6) {
+      enemy.name= AXOLOTL;
+      enemy.features.attack= 40;
+      enemy.features.defense= 40;
+      enemy.features.hp = (enemy.features.defense*2);}
       
-    else if num_dado <=11 {
-      cout  << "Breed: " << Enemy.Breed= 2 << endl
-            << "Attack: " << Enemy.features.attack= 60 << endl
-            << "Defense: " << Enemy.features.defense= 80 <<endl
-            << "Health points: ",Enemy.features.hp = (hero.features.defense*2);}
+    else if (num_dado <=11) {
+      enemy.name= "bbbb";
+      enemy.features.attack= 60;
+      enemy.features.defense= 80;
+      enemy.features.hp = (enemy.features.defense*2);}
       
-    else if num_dado <=15 {
-      cout  << "Breed: ",Enemy.Breed= 3;
-            << "Attack: ",Enemy.features.attack= 80 ;
-            << "Defense: ",Enemy.features.defense= 120;
-            << "Health points: ",Enemy.features.hp = (hero.features.defense*2);}
+    else if (num_dado <=15) {
+      enemy.name= "cccc";
+      enemy.features.attack= 80;
+      enemy.features.defense= 120;
+      enemy.features.hp = (enemy.features.defense*2);}
       
-    else if  num_dado <=18 {
-      cout  << "Breed: ",Enemy.Breed= 3;
-            << "Attack: ",Enemy.features.attack= 120 ;
-            << "Defense: ",Enemy.features.defense= 100;
-            << "Health points: ",Enemy.features.hp = (hero.features.defense*2);}
+    else if  (num_dado <=18) {
+      enemy.name= "dddd";
+      enemy.features.attack= 120;
+      enemy.features.defense= 100;
+      enemy.features.hp = (enemy.features.defense*2);}
       
-    else if num_dado <=20 {
-     cout  << "Breed: ",Enemy.Breed= 3;
-            << "Attack: ",Enemy.features.attack= 160 ;
-            << "Defense: ",Enemy.features.defense= 140;
-            << "Health points: ",Enemy.features.hp = (hero.features.defense*2);}
+    else if (num_dado <=20) {
+      enemy.Breed= "e";
+      enemy.features.attack= 160;
+      enemy.features.defense= 140;
+      enemy.features.hp = (enemy.features.defense*2);}
       
-  }
+  
+  cout << "Breed: " << enemy.name << endl
+        << "Attack: " << enemy.features.attack << endl
+        << "Defense: " << enemy.features.defense << endl
+        << "Health points: " << enemy.features.hp << endl  ;
   return enemy;
 }
 /*Inicializacion de funciones
@@ -235,7 +248,7 @@ void showMenu(){
   }
 }
 
-
+*/
 
 int main(int argc,char *argv[]){
 
@@ -248,9 +261,6 @@ int main(int argc,char *argv[]){
     // Aquí vendrá todo tu código del "main"...
     Hero hero;
     Enemy enemy;
-    createHero();
-    createEnemy();
-    showMenu();
+    hero = createHero();
   }
 }
-*/
