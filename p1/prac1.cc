@@ -39,92 +39,98 @@ struct Hero{
 int rollDice(){   //funcion de dado
   return rand()%KDICE+1; //devuelve valores entre 1 y 20
 }
-/*declarar funciones*/
-int nombreheroe(Hero &name){};
-int attack_defense(){};
 
 
-Hero createHero(Hero &name ){
-  nombreheroe(Hero.name);{  //funcion nombre heroe
+
+
+
+Hero createHero(){
+  Hero hero;
+  char nombre_Heore[KNAME];
+  int error;
+  int ataque, defensa;
+  int ataquetotal, defensatotal;
+  do{
     cout << "Enter Hero name: \n ";
-    char nombre_Heore;
     cin >> nombre_Heore;
-    if (nombre_Heore = "");{ //prueba de nombre vacio
-      cout << "Error Worng Name \n";
-      nombreheroe();
-    };
-    else-if ((isalnum(nombre_Heore[0]) == 0));{ //prueba valores alfanumericos
-      cout << "Error Worng Name \n";
-      nombreheroe();
-    };
-    else{
-      Hero.name=nombre_Heore;
+    if (nombre_Heore == ""){ //prueba de nombre vacio
+      cout << "ERROR: Worng Name \n";
+      error = 1;
     }
-    
+    else if ((isalnum(nombre_Heore[0]) == 0)){ //prueba valores alfanumericos
+      cout << "ERROR: Worng Name \n";
+      error = 1;
+    }
+  
+  }while (error == 0 );
+  do{ 
 
-  }
-  attack_defense();{ //funcion ataque y defensa
-    int ataque_defensa;
-    cout << "Enter attack/defense \n";
-    cin >> ataque_defensa;
-      //cin.get()   trocear el parametro en dos valores enteros (%ataque/%defensa)
-      //comprobar valores > 0
-    if (ataque+defesensa=100); { //comprobar que los dos valores suman 100
-      hero.Core.attack = (ataque/100)*200;
-      hero.Core.defense = (defensa/100)*200;
+  cout << "Enter attack/defense \n";
+  ataque = cin.get();
+  defensa = cin.get();
+  
+    if (ataque+defensa == 100) { //comprobar que los dos valores suman 100
+      ataquetotal = (ataque/100)*200;
+      defensatotal = (defensa/100)*200;
 
-    } ;
+    } 
     else{ 
       cout << "Error Worng Distribution"; 
-      attack_defense();
-    };
-    
-  }
-  Hero.core.hp = (hero.Core.defense*2);
-  Hero.special = true;
-  Hero.exp = 0;
-  Hero.kills = 0;
-  Hero.runaways = 3;
+      ataque =0;
+    }
+  }while (ataque == 0);
+  hero.name[KNAME] = nombre_Heore[KNAME];
+  hero.features.attack = ataquetotal;
+  hero.features.defense = defensatotal;
+  hero.features.hp = (hero.features.defense*2);
+  hero.special = true;
+  hero.exp = 0;
+  hero.kills[KENEMIES] ;
+  hero.runaways = 3;
+  return hero;
 }
-
+/*
 Enemy createEnemy(Enemy &enemy){
-  switch (rollDice){
-    if rollDice <=6 {
-      cout  << "Breed: ",Enemy.Breed= 1;
-            << "Attack: ",Enemy.Core.attack= 40 ;
-            << "Defense: ",Enemy.Core.defense= 40;
-            << "Health points: ",Enemy.core.hp = (hero.Core.defense*2); }
+  Enemy enemy
+  int num_dado;
+  num_dado = rollDice();
+    if num_dado <=6 {
+      cout  << "Breed: " << enemy.Breed= 1 << endl
+            << "Attack: " << enemy.features.attack= 40 << endl
+            << "Defense: " << enemy.features.defense= 40 << endl
+            << "Health points: " << enemy.features.hp = (hero.features.defense*2) << endl  }
       
-    else-if rollDice <=11 {
-      cout  << "Breed: ",Enemy.Breed= 2;
-            << "Attack: ",Enemy.Core.attack= 60 ;
-            << "Defense: ",Enemy.Core.defense= 80;
-            << "Health points: ",Enemy.core.hp = (hero.Core.defense*2);}
+    else if num_dado <=11 {
+      cout  << "Breed: " << Enemy.Breed= 2 << endl
+            << "Attack: " << Enemy.features.attack= 60 << endl
+            << "Defense: " << Enemy.features.defense= 80 <<endl
+            << "Health points: ",Enemy.features.hp = (hero.features.defense*2);}
       
-    else-if rollDice <=15 {
+    else if num_dado <=15 {
       cout  << "Breed: ",Enemy.Breed= 3;
-            << "Attack: ",Enemy.Core.attack= 80 ;
-            << "Defense: ",Enemy.Core.defense= 120;
-            << "Health points: ",Enemy.core.hp = (hero.Core.defense*2);}
+            << "Attack: ",Enemy.features.attack= 80 ;
+            << "Defense: ",Enemy.features.defense= 120;
+            << "Health points: ",Enemy.features.hp = (hero.features.defense*2);}
       
-    else-if rollDice <=18 {
+    else if  num_dado <=18 {
       cout  << "Breed: ",Enemy.Breed= 3;
-            << "Attack: ",Enemy.Core.attack= 120 ;
-            << "Defense: ",Enemy.Core.defense= 100;
-            << "Health points: ",Enemy.core.hp = (hero.Core.defense*2);}
+            << "Attack: ",Enemy.features.attack= 120 ;
+            << "Defense: ",Enemy.features.defense= 100;
+            << "Health points: ",Enemy.features.hp = (hero.features.defense*2);}
       
-    else-if rollDice <=20 {
+    else if num_dado <=20 {
      cout  << "Breed: ",Enemy.Breed= 3;
-            << "Attack: ",Enemy.Core.attack= 160 ;
-            << "Defense: ",Enemy.Core.defense= 140;
-            << "Health points: ",Enemy.core.hp = (hero.Core.defense*2);}
+            << "Attack: ",Enemy.features.attack= 160 ;
+            << "Defense: ",Enemy.features.defense= 140;
+            << "Health points: ",Enemy.features.hp = (hero.features.defense*2);}
       
   }
+  return enemy;
 }
-/*Inicializacion de funciones*/
+/*Inicializacion de funciones
 report();
 showMenu();
-/********************/
+
 void fight(Hero &hero,Enemy &enemy){   
 
   do{
@@ -132,49 +138,48 @@ void fight(Hero &hero,Enemy &enemy){
       dadoheore = (dadoheore*5);
     int dadoenemy = rollDice();
       dadoenemy = (dadoenemy*5);
-    int vida_inicial = Hero.core.attack;
-      Hero.core.attack= (dadoheore+vida_inicial);
-    int defensa_inicial = Enemy.core.defense;
-      Enemy.core.defense= (dadoenemy+defensa_inicial);
+    int ataque_inicial = Hero.features.attack;
+      ataque_inicial = (dadoheore+ataque_inicial);
+    int defensa_inicial = Enemy.features.defense;
+      defensa_inicial = (dadoenemy+defensa_inicial);
     int hit_points;
-      hit_points = (Enemy.defense-Hero.attack);
-      Enemy.core.hp= (Hero.core.hp-hit_points);
+      hit_points = (ataque_inicial-defensa_inicial);
+      Enemy.features.hp= (Hero.features.hp-hit_points);
     cout << "[Hero -> Enemy]" << endl
-         << "Attack: ",vida_inicial,"+",dadoheore << endl
-         << "Defense: ",defensa_inicial,"+",dadoenemy << endl
-         << "Hit Point: ", hit_points << endl
-         << "Enemy health points: ",Enemy.core.hp << endl
-    if (Enemy.core.hp<=0){
-      break;
-    }
-    else{
+         << "Attack: " << ataque_inicial << "+" << dadoheore << endl
+         << "Defense: " << defensa_inicial << "+" << dadoenemy << endl
+         << "Hit Point: " << hit_points << endl
+         << "Enemy health points: " << Enemy.features.hp << endl;
+    if (Enemy.features.hp>0){
       int dadoenemy = rollDice();
       dadoenemy = (dadoenemy*5); 
       int dadoheore = rollDice();
       dadoheore = (dadoheore*5);
 
-    int vida_inicial = Enemy.core.attack;
-      Enemy.core.attack= (dadoheore+vida_inicial);
-    int defensa_inicial = Hero.core.defense;
-      Hero.core.defense= (dadoenemy+defensa_inicial);
-    int hit_points;
-      hit_points = (Hero.defense-Enemy.attack);
-      Hero.core.hp= (Enemy.core.hp-hit_points);
-    cout << "[Enemy -> Hero]" << endl
-         << "Attack: ",vida_inicial,"+",dadoenemy << endl
-         << "Defense: ",defensa_inicial,"+",dadoheore << endl
-         << "Hit Point: ", hit_points << endl
-         << "Enemy health points: ",Hero.core.hp << endl
-    if Hero.core.hp>0 {
-      showMenu();
+      int ataque_inicial_eneMY = Enemy.features.attack;
+        ataque_inicial_eneMY= (dadoenemy+ataque_inicial_eneMY);
+      int defensa_inicial_h = Hero.features.defense;
+        defensa_inicial_h= (dadoheroe+defensa_inicial_h);
+      int hit_points_eneMY;
+        hit_points_eneMY = (Hero.defense-Enemy.attack);
+        Hero.features.hp= (Enemy.features.hp-hit_points);
+      cout << "[Enemy -> Hero]" << endl
+          << "Attack: ",ataque_inicial,"+",dadoenemy << endl
+          << "Defense: ",defensa_inicial,"+",dadoheore << endl
+          << "Hit Point: ", hit_points << endl
+          << "Enemy health points: ",Hero.features.hp << endl
+      if Hero.features.hp>0 {
+        showMenu();
+      }
+      else{
+        cout << "You are dead";
+        report ();
+      }
     }
-    else{
-      cout << "You are dead";
-      report ();
-    }
-    }
+
+      
   }
-  while (Enemy.core.hp<=0){
+  while (Enemy.features.hp<=0){
     cout << "Enemy Killed" << endl
     if enum.Breed = 1 {
       Hero.exp = Hero.exp+100;
@@ -230,7 +235,10 @@ void showMenu(){
   }
 }
 
+
+
 int main(int argc,char *argv[]){
+
   if(argc!=2){ // Si los parámetros no son correctos, el programa termina inmediatamente
     cout << "Usage: " << argv[0] << " <seed>" << endl;
   }
@@ -238,8 +246,11 @@ int main(int argc,char *argv[]){
     srand(atoi(argv[1])); // Introducimos la semilla para generar números aleatorios
     
     // Aquí vendrá todo tu código del "main"...
+    Hero hero;
+    Enemy enemy;
     createHero();
     createEnemy();
     showMenu();
   }
 }
+*/
