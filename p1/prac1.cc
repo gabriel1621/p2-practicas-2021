@@ -43,7 +43,7 @@ int rollDice(){   //funcion de dado
 Hero createHero(){
   Hero hero;
   char nombre_Heore[KNAME];
-  int error;
+  int error,error2;
   int ataque, defensa;
   int ataquetotal, defensatotal;
 
@@ -66,22 +66,22 @@ Hero createHero(){
     }
     
   
-  }while (error != 0 );
+  }while (error != 0 );/*
   do{ 
-
-  cout << "Enter attack/defense" << endl;
-  ataque = cin.get();
-  defensa = cin.get();
-    if (ataque+defensa == 100) { //comprobar que los dos valores suman 100
+    error2 =0;
+    cout << "Enter attack/defense" << endl;
+    ataque = cin.get();  
+    defensa = cin.get();
+    if ((ataque+defensa) == 100) { //comprobar que los dos valores suman 100
       ataquetotal = (ataque/100)*200;
       defensatotal = (defensa/100)*200;
 
     } 
     else { 
       cout << "Error Worng Distribution" << endl; 
-      ataque =0;
+      error2 =1;
     }
-  }while (ataque == 0);
+  }while (ataque != 0);*/
   hero.name[KNAME] = nombre_Heore[KNAME];
   hero.features.attack = ataquetotal;
   hero.features.defense = defensatotal;
@@ -135,13 +135,67 @@ Enemy createEnemy(){
   return enemy;
 }
 /*Inicializacion de funciones*/
-void showMenu();
-void report();
+void showMenu(Hero &hero, Enemy &enemy);
+void report(Hero &hero);
+void lucha(Hero &hero, Enemy &enemy);
+void fight(Hero &hero,Enemy &enemy);
+void runawayfuncion(Hero &hero);
+void special(Hero &hero);
 
+/**************************************/
+void runawayfuncion(Hero &hero, Enemy &enemy){
+  int contador_de_huida;
+ while (hero.runaways >= 0 && contador_de_huida <= 2){
+   contador_de_huida++;
+   hero.runaways= hero.runaways-1;
+   createEnemy();
+  }
+ cout << "ERROR: can not run away";
+ showMenu(hero,enemy);
+  
+}
+void showMenu(Hero &hero, Enemy &enemy){
+  char opcion;
+  cout << "[Options]" << endl
+       << "1- Fight" << endl
+       << "2- Run away" << endl
+       << "3- Special" << endl 
+       << "4- Report" << endl
+       << "q- Quit" << endl
+       << "Option: ";
+  cin >> opcion; 
+  switch (opcion){
+    case 49: {
+      fight(hero,enemy);
+      break;
+    }
+    case 50: {
+      runawayfuncion(hero);
+      break;}
+    case 51: {
+      special(hero);
+      break;}
+    case 52: {/*
+      report(hero);*/
+      break;}
+    case 113: exit;
+    default: 
+      cout << "Error Wrong Option \n";
+      showMenu(hero,enemy);
+  }
+}
 
-void fight(Hero &hero,Enemy &enemy){   
-
-  do{
+void report(const Hero &hero){
+  char printspecial;
+    cout << "Name: " << hero.name << endl
+      << "Attack: " << hero.features.attack << endl
+      << "Defense: " << hero.features.defense << endl
+      << "Health points: " << hero.features.hp << endl
+      << "Special: " << printspecial << endl
+      <<  "Runaways: " << hero.runaways << endl
+      << "Exp: " << hero.exp << endl;
+}
+void lucha(Hero &hero, Enemy &enemy){
     int dadoheore = rollDice();
       dadoheore = (dadoheore*5);
     int dadoenemy = rollDice();
@@ -153,12 +207,14 @@ void fight(Hero &hero,Enemy &enemy){
     int hit_points;
       hit_points = (ataque_inicial-defensa_inicial);
       enemy.features.hp= (hero.features.hp-hit_points);
+    int vida_enemy;
+      vida_enemy = enemy.features.hp;
     cout << "[Hero -> Enemy]" << endl
-         << "Attack: " << ataque_inicial << "+" << dadoheore << endl
-         << "Defense: " << defensa_inicial << "+" << dadoenemy << endl
+         << "Attack: " << ataque_inicial << " + " << dadoheore << endl
+         << "Defense: " << defensa_inicial << " + " << dadoenemy << endl
          << "Hit Point: " << hit_points << endl
-         << "Enemy health points: " << enemy.features.hp << endl;
-    if (enemy.features.hp>0){
+         << "Enemy health points: " << vida_enemy << endl;
+    if (vida_enemy>0){
       dadoenemy = rollDice();
       dadoenemy = (dadoenemy*5); 
       dadoheore = rollDice();
@@ -169,79 +225,70 @@ void fight(Hero &hero,Enemy &enemy){
       int defensa_inicial_h = hero.features.defense;
         defensa_inicial_h= (dadoheore+defensa_inicial_h);
       int hit_points_eneMY;
-        hit_points_eneMY = (hero.features.defense-enemy.features.attack);
+        hit_points_eneMY = (ataque_inicial_eneMY-defensa_inicial_h);
         hero.features.hp= (enemy.features.hp-hit_points);
+      int vida_heroe;
+        vida_heroe=hero.features.hp;
       cout << "[Enemy -> Hero]" << endl
           << "Attack: "<<ataque_inicial<<"+"<<dadoenemy << endl
           << "Defense: "<<defensa_inicial<<"+"<<dadoheore << endl
           << "Hit Point: "<< hit_points << endl
-          << "Enemy health points: "<<hero.features.hp << endl;
-      if (hero.features.hp>0) {
-        showMenu();
+          << "Enemy health points: "<<vida_heroe << endl;
+      if (vida_heroe>0) {
+        showMenu(hero,enemy);
       }
       else{
         cout << "You are dead" << endl;
-        report ();
+        /*report(hero);*/
       }
     }
 
+}
+
+void fight(Hero &hero,Enemy &enemy){   
+  
+  do{
+    lucha(hero,enemy);
       
-  }while (enemy.features.hp<=0);{
+  }while (enemy.features.hp<=0);
+  int xp;
+  xp = hero.exp;
     cout << "Enemy Killed" << endl;
     if (enemy.name = AXOLOTL ){
-      hero.exp = hero.exp+100;
+      hero.exp = xp+100;
     }
     else if (enemy.name = TROLL) {
-      hero.exp = hero.exp+150;
+      hero.exp = xp+150;
     }
     else if (enemy.name = ORC ){
-      hero.exp = hero.exp+200;
+      hero.exp = xp+200;
     }
     else if (enemy.name = HELLHOUND ){
-      hero.exp = hero.exp+300;
+      hero.exp = xp+300;
     }
     else if (enemy.name = DRAGON) {
-      hero.exp = hero.exp+400;
+      hero.exp = xp+400;
     }
 
-  }
-
-}
-void runawayfuncion(Hero &hero){
-  int contador_de_huida;
-  contador_de_huida ++;
- while (hero.runaways>=0 || contador_de_huida<=2){
-   hero.runaways= hero.runaways-1;
-   createEnemy();
- }
- cout << "ERROR: cannot run away";
- showMenu();
   
-}
-void report(const Hero &hero){
+
 }
 
-void showMenu(){
-  char opcion;
-  cout << "[Options]" << endl
-       << "1- Fight" << endl
-       << "2- Run away" << endl
-       << "3- Special" << endl 
-       << "4- Report" << endl
-       << "q- Quit" << endl
-       << "Option: ";
-  cin >> opcion; 
-  switch (opcion){
-    case 49: void fight();
-    case 50: void unawayfuncion();
-    case 51:
-    case 52: void report();
-    case 113: exit;
-    default: 
-      cout << "Error Wrong Option \n";
-      showMenu();
-  }
+
+void special(Hero &hero){/*
+  if (hero.special == true){
+    hero.special = false;
+    lucha(dadoheore)=(dadoheore*3)
+    lucha();
+    
+
+  }else{
+    cout << "ERROR: special not available" << endl;
+    showMenu();
+  }*/
 }
+
+
 
 
 int main(int argc,char *argv[]){
@@ -257,6 +304,7 @@ int main(int argc,char *argv[]){
     Enemy enemy;
     hero = createHero();
     enemy = createEnemy();
-    
+    showMenu(hero,enemy);
+
   }
 }
