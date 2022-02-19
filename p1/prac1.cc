@@ -40,11 +40,6 @@ struct Hero{
 int rollDice(){   //funcion de dado
   return rand()%KDICE+1; //devuelve valores entre 1 y 20
 }
-
-
-
-
-
 Hero createHero(){
   Hero hero;
   char nombre_Heore[KNAME];
@@ -77,14 +72,13 @@ Hero createHero(){
   cout << "Enter attack/defense" << endl;
   ataque = cin.get();
   defensa = cin.get();
-  
     if (ataque+defensa == 100) { //comprobar que los dos valores suman 100
       ataquetotal = (ataque/100)*200;
       defensatotal = (defensa/100)*200;
 
     } 
     else { 
-      cout << "Error Worng Distribution"; 
+      cout << "Error Worng Distribution" << endl; 
       ataque =0;
     }
   }while (ataque == 0);
@@ -110,25 +104,25 @@ Enemy createEnemy(){
       enemy.features.hp = (enemy.features.defense*2);}
       
     else if (num_dado <=11) {
-      enemy.name= "bbbb";
+      enemy.name= TROLL;
       enemy.features.attack= 60;
       enemy.features.defense= 80;
       enemy.features.hp = (enemy.features.defense*2);}
       
     else if (num_dado <=15) {
-      enemy.name= "cccc";
+      enemy.name= ORC;
       enemy.features.attack= 80;
       enemy.features.defense= 120;
       enemy.features.hp = (enemy.features.defense*2);}
       
     else if  (num_dado <=18) {
-      enemy.name= "dddd";
+      enemy.name= HELLHOUND;
       enemy.features.attack= 120;
       enemy.features.defense= 100;
       enemy.features.hp = (enemy.features.defense*2);}
       
     else if (num_dado <=20) {
-      enemy.Breed= "e";
+      enemy.name= DRAGON;
       enemy.features.attack= 160;
       enemy.features.defense= 140;
       enemy.features.hp = (enemy.features.defense*2);}
@@ -140,9 +134,10 @@ Enemy createEnemy(){
         << "Health points: " << enemy.features.hp << endl  ;
   return enemy;
 }
-/*Inicializacion de funciones
-report();
-showMenu();
+/*Inicializacion de funciones*/
+void showMenu();
+void report();
+
 
 void fight(Hero &hero,Enemy &enemy){   
 
@@ -151,63 +146,62 @@ void fight(Hero &hero,Enemy &enemy){
       dadoheore = (dadoheore*5);
     int dadoenemy = rollDice();
       dadoenemy = (dadoenemy*5);
-    int ataque_inicial = Hero.features.attack;
+    int ataque_inicial = hero.features.attack;
       ataque_inicial = (dadoheore+ataque_inicial);
-    int defensa_inicial = Enemy.features.defense;
+    int defensa_inicial = enemy.features.defense;
       defensa_inicial = (dadoenemy+defensa_inicial);
     int hit_points;
       hit_points = (ataque_inicial-defensa_inicial);
-      Enemy.features.hp= (Hero.features.hp-hit_points);
+      enemy.features.hp= (hero.features.hp-hit_points);
     cout << "[Hero -> Enemy]" << endl
          << "Attack: " << ataque_inicial << "+" << dadoheore << endl
          << "Defense: " << defensa_inicial << "+" << dadoenemy << endl
          << "Hit Point: " << hit_points << endl
-         << "Enemy health points: " << Enemy.features.hp << endl;
-    if (Enemy.features.hp>0){
-      int dadoenemy = rollDice();
+         << "Enemy health points: " << enemy.features.hp << endl;
+    if (enemy.features.hp>0){
+      dadoenemy = rollDice();
       dadoenemy = (dadoenemy*5); 
-      int dadoheore = rollDice();
+      dadoheore = rollDice();
       dadoheore = (dadoheore*5);
 
-      int ataque_inicial_eneMY = Enemy.features.attack;
+      int ataque_inicial_eneMY = enemy.features.attack;
         ataque_inicial_eneMY= (dadoenemy+ataque_inicial_eneMY);
-      int defensa_inicial_h = Hero.features.defense;
-        defensa_inicial_h= (dadoheroe+defensa_inicial_h);
+      int defensa_inicial_h = hero.features.defense;
+        defensa_inicial_h= (dadoheore+defensa_inicial_h);
       int hit_points_eneMY;
-        hit_points_eneMY = (Hero.defense-Enemy.attack);
-        Hero.features.hp= (Enemy.features.hp-hit_points);
+        hit_points_eneMY = (hero.features.defense-enemy.features.attack);
+        hero.features.hp= (enemy.features.hp-hit_points);
       cout << "[Enemy -> Hero]" << endl
-          << "Attack: ",ataque_inicial,"+",dadoenemy << endl
-          << "Defense: ",defensa_inicial,"+",dadoheore << endl
-          << "Hit Point: ", hit_points << endl
-          << "Enemy health points: ",Hero.features.hp << endl
-      if Hero.features.hp>0 {
+          << "Attack: "<<ataque_inicial<<"+"<<dadoenemy << endl
+          << "Defense: "<<defensa_inicial<<"+"<<dadoheore << endl
+          << "Hit Point: "<< hit_points << endl
+          << "Enemy health points: "<<hero.features.hp << endl;
+      if (hero.features.hp>0) {
         showMenu();
       }
       else{
-        cout << "You are dead";
+        cout << "You are dead" << endl;
         report ();
       }
     }
 
       
-  }
-  while (Enemy.features.hp<=0){
-    cout << "Enemy Killed" << endl
-    if enum.Breed = 1 {
-      Hero.exp = Hero.exp+100;
+  }while (enemy.features.hp<=0);{
+    cout << "Enemy Killed" << endl;
+    if (enemy.name = AXOLOTL ){
+      hero.exp = hero.exp+100;
     }
-    else-if enum.Breed = 2 {
-      Hero.exp = Hero.exp+150;
+    else if (enemy.name = TROLL) {
+      hero.exp = hero.exp+150;
     }
-    else-if enum.Breed = 3 {
-      Hero.exp = Hero.exp+200;
+    else if (enemy.name = ORC ){
+      hero.exp = hero.exp+200;
     }
-    else-if enum.Breed = 4 {
-      Hero.exp = Hero.exp+300;
+    else if (enemy.name = HELLHOUND ){
+      hero.exp = hero.exp+300;
     }
-    else-if enum.Breed = 5 {
-      Hero.exp = Hero.exp+400;
+    else if (enemy.name = DRAGON) {
+      hero.exp = hero.exp+400;
     }
 
   }
@@ -216,8 +210,8 @@ void fight(Hero &hero,Enemy &enemy){
 void runawayfuncion(Hero &hero){
   int contador_de_huida;
   contador_de_huida ++;
- while Hero.runaways>=0 || contador_de_huida<=2{
-   Hero.runaways= Hero.runaways-1;
+ while (hero.runaways>=0 || contador_de_huida<=2){
+   hero.runaways= hero.runaways-1;
    createEnemy();
  }
  cout << "ERROR: cannot run away";
@@ -228,6 +222,7 @@ void report(const Hero &hero){
 }
 
 void showMenu(){
+  char opcion;
   cout << "[Options]" << endl
        << "1- Fight" << endl
        << "2- Run away" << endl
@@ -237,18 +232,17 @@ void showMenu(){
        << "Option: ";
   cin >> opcion; 
   switch (opcion){
-    case 1: fight();
-    case 2: runawayfuncion();
-    case 3:
-    case 4: report();
-    case "q": Exit;
+    case 49: void fight();
+    case 50: void unawayfuncion();
+    case 51:
+    case 52: void report();
+    case 113: exit;
     default: 
       cout << "Error Wrong Option \n";
-      showMenu()
+      showMenu();
   }
 }
 
-*/
 
 int main(int argc,char *argv[]){
 
@@ -262,5 +256,7 @@ int main(int argc,char *argv[]){
     Hero hero;
     Enemy enemy;
     hero = createHero();
+    enemy = createEnemy();
+    
   }
 }
