@@ -27,7 +27,7 @@ struct Enemy{
   Breed name;
   Core features;
 };
-
+/* estructura del heroe*/
 struct Hero{
   char name[KNAME];
   Core features;
@@ -40,59 +40,76 @@ struct Hero{
 int rollDice(){   //funcion de dado
   return rand()%KDICE+1; //devuelve valores entre 1 y 20
 }
+/*creacion de heroe*/
 Hero createHero(){
   Hero hero;
-  char nombre_Heore[KNAME];
-  int error,error2;
-  int ataque, defensa;
+  /*variables auxiliares*/
+  char nombre_Heore[KNAME]; //nombre de heroe
+  int error,error2,cacter,pos; //control de errores
+  float ataque, defensa; //
   int ataquetotal, defensatotal;
-
+  int longitud;
+  
   do{
     cout << "Enter Hero name:" << endl;
     cin >> nombre_Heore;
-    error = 0 ;
-    if ((isalnum(nombre_Heore[0]) == 0)){ //prueba valores alfanumericos
-      cout << "ERROR: Worng Name" << endl;
-      error = 2;
-
+        error = 0 ;
+        cacter=0;
+        pos=0;
+    for (int i=0;i<KNAME;++i){
+      pos++;
+      if ((isalnum(nombre_Heore[i]) == 0)){ //prueba valores alfanumericos
+        i=KNAME;
+        cacter++;
+        if ((isalnum(nombre_Heore[pos+1])==0)){cacter++;}      
+      }
+      
+      
     }
-    else if ((isalpha(nombre_Heore[0]) == 0)){ //prueba valores alfanumericos
+    if (cacter>2){
+      cout << "ERROR: Wrong Name" << endl;
+    }
+    else if ((isalpha(nombre_Heore[0]) == 0)){ //prueba primera letra inicial
       cout << "ERROR: Worng Name" << endl;
       error = 3;
     }
-    else if (long(nombre_Heore[KNAME]==1)){
+    else if (long(nombre_Heore[0]==(-1))){
       cout << "ERROR: Worng Name" << endl;
       error = 3;
     }
     
   
-  }while (error != 0 );/*
+  }while (error != 0 );
   do{ 
     error2 =0;
     cout << "Enter attack/defense" << endl;
-    ataque = cin.get();  
-    defensa = cin.get();
-    if ((ataque+defensa) == 100) { //comprobar que los dos valores suman 100
-      ataquetotal = (ataque/100)*200;
-      defensatotal = (defensa/100)*200;
-
-    } 
-    else { 
+    cin >> ataque;
+    cin.get();  
+    cin >> defensa;
+    if ((ataque+defensa) != 100) { //comprobar que los dos valores suman 100
+      
       cout << "Error Worng Distribution" << endl; 
       error2 =1;
+    } 
+    else { 
+      ataquetotal = (ataque/100)*200;
+      defensatotal = (defensa/100)*200;
+      
     }
-  }while (ataque != 0);*/
+  }while (error2 != 0);
   hero.name[KNAME] = nombre_Heore[KNAME];
   hero.features.attack = ataquetotal;
   hero.features.defense = defensatotal;
   hero.features.hp = (hero.features.defense*2);
   hero.special = true;
   hero.exp = 0;
-  hero.kills[KENEMIES] ;
+  for (int x =0;x<KENEMIES;++x){
+    hero.kills[x]=0 ;
+  }
   hero.runaways = 3;
   return hero;
 }
-
+/*crecion enemigo*/
 Enemy createEnemy(){
   Enemy enemy;
   int num_dado;
@@ -136,22 +153,43 @@ Enemy createEnemy(){
 }
 /*Inicializacion de funciones*/
 void showMenu(Hero &hero, Enemy &enemy);
-void report(Hero &hero);
+void report(const Hero &hero);
 void lucha(Hero &hero, Enemy &enemy);
 void fight(Hero &hero,Enemy &enemy);
-void runawayfuncion(Hero &hero);
+void runawayfuncion(Hero &hero, Enemy &enemy);
 void special(Hero &hero);
 
 /**************************************/
 void runawayfuncion(Hero &hero, Enemy &enemy){
   int contador_de_huida;
- while (hero.runaways >= 0 && contador_de_huida <= 2){
+  if (hero.runaways >= 0 || contador_de_huida <= 2){
    contador_de_huida++;
    hero.runaways= hero.runaways-1;
    createEnemy();
+   showMenu(hero,enemy);
+  }else{
+    cout << "ERROR: can not run away"<<endl;
+    showMenu(hero,enemy);
   }
- cout << "ERROR: can not run away";
- showMenu(hero,enemy);
+ 
+  
+}
+void report(const Hero &hero){
+  char printspecial;
+    cout << "Name: " << hero.name << endl
+      << "Attack: " << hero.features.attack << endl
+      << "Defense: " << hero.features.defense << endl
+      << "Health points: " << hero.features.hp << endl
+      << "Special: " << printspecial << endl
+      <<  "Runaways: " << hero.runaways << endl
+      << "Exp: " << hero.exp << endl
+      << "Enemies killed: "<<endl
+      << "- Axolot: "<<hero.kills[0]<<endl
+      << "- Troll: "<<hero.kills[1]<<endl
+      << "- Orc: "<<hero.kills[2]<<endl
+      << "- Hellhound: "<<hero.kills[3]<<endl
+      << "- Dragon: "<<hero.kills[4]<<endl
+      << "Total: "<<(hero.kills[0]+hero.kills[1]+hero.kills[2]+hero.kills[3]+hero.kills[4])<<endl;
   
 }
 void showMenu(Hero &hero, Enemy &enemy){
@@ -164,37 +202,27 @@ void showMenu(Hero &hero, Enemy &enemy){
        << "q- Quit" << endl
        << "Option: ";
   cin >> opcion; 
-  switch (opcion){
-    case 49: {
-      fight(hero,enemy);
-      break;
-    }
-    case 50: {
-      runawayfuncion(hero);
-      break;}
-    case 51: {
-      special(hero);
-      break;}
-    case 52: {/*
-      report(hero);*/
-      break;}
-    case 113: exit;
-    default: 
-      cout << "Error Wrong Option \n";
+  if (opcion == 49){
+    fight(hero,enemy);
+  }
+  else if (opcion == 50){
+    runawayfuncion(hero,enemy);
+  }
+  else if(opcion == 51){
+    special(hero);
+  }
+  else if (opcion == 52){
+    report(hero);
+  }
+  else if (opcion == 113){
+    exit;
+  }else{
+    cout << "Error Wrong Option" <<endl;
       showMenu(hero,enemy);
   }
 }
 
-void report(const Hero &hero){
-  char printspecial;
-    cout << "Name: " << hero.name << endl
-      << "Attack: " << hero.features.attack << endl
-      << "Defense: " << hero.features.defense << endl
-      << "Health points: " << hero.features.hp << endl
-      << "Special: " << printspecial << endl
-      <<  "Runaways: " << hero.runaways << endl
-      << "Exp: " << hero.exp << endl;
-}
+
 void lucha(Hero &hero, Enemy &enemy){
     int dadoheore = rollDice();
       dadoheore = (dadoheore*5);
@@ -206,12 +234,12 @@ void lucha(Hero &hero, Enemy &enemy){
       defensa_inicial = (dadoenemy+defensa_inicial);
     int hit_points;
       hit_points = (ataque_inicial-defensa_inicial);
-      enemy.features.hp= (hero.features.hp-hit_points);
+      enemy.features.hp= (enemy.features.hp-hit_points);
     int vida_enemy;
       vida_enemy = enemy.features.hp;
     cout << "[Hero -> Enemy]" << endl
-         << "Attack: " << ataque_inicial << " + " << dadoheore << endl
-         << "Defense: " << defensa_inicial << " + " << dadoenemy << endl
+         << "Attack: " << hero.features.attack << " + " << dadoheore << endl
+         << "Defense: " << enemy.features.defense << " + " << dadoenemy << endl
          << "Hit Point: " << hit_points << endl
          << "Enemy health points: " << vida_enemy << endl;
     if (vida_enemy>0){
@@ -226,51 +254,55 @@ void lucha(Hero &hero, Enemy &enemy){
         defensa_inicial_h= (dadoheore+defensa_inicial_h);
       int hit_points_eneMY;
         hit_points_eneMY = (ataque_inicial_eneMY-defensa_inicial_h);
-        hero.features.hp= (enemy.features.hp-hit_points);
+        hero.features.hp= (hero.features.hp-hit_points_eneMY);
       int vida_heroe;
         vida_heroe=hero.features.hp;
       cout << "[Enemy -> Hero]" << endl
-          << "Attack: "<<ataque_inicial<<"+"<<dadoenemy << endl
-          << "Defense: "<<defensa_inicial<<"+"<<dadoheore << endl
-          << "Hit Point: "<< hit_points << endl
-          << "Enemy health points: "<<vida_heroe << endl;
+          << "Attack: "<<enemy.features.attack<<"+"<<dadoenemy << endl
+          << "Defense: "<<hero.features.defense<<"+"<<dadoheore << endl
+          << "Hit Point: "<< hit_points_eneMY << endl
+          << "Hero health points: "<<vida_heroe << endl;
       if (vida_heroe>0) {
         showMenu(hero,enemy);
       }
       else{
         cout << "You are dead" << endl;
-        /*report(hero);*/
+        report(hero);
       }
     }
 
 }
 
 void fight(Hero &hero,Enemy &enemy){   
-  
-  do{
+ 
+  if (enemy.features.hp>0){
     lucha(hero,enemy);
-      
-  }while (enemy.features.hp<=0);
+  }
   int xp;
   xp = hero.exp;
     cout << "Enemy Killed" << endl;
     if (enemy.name = AXOLOTL ){
       hero.exp = xp+100;
+      hero.kills[0]++;
     }
     else if (enemy.name = TROLL) {
       hero.exp = xp+150;
+      hero.kills[1]++;
     }
     else if (enemy.name = ORC ){
       hero.exp = xp+200;
+      hero.kills[2]++;
     }
     else if (enemy.name = HELLHOUND ){
       hero.exp = xp+300;
+      hero.kills[3]++;
     }
     else if (enemy.name = DRAGON) {
       hero.exp = xp+400;
+      hero.kills[4]++;
     }
-
-  
+    createEnemy();
+    showMenu(hero,enemy);
 
 }
 
