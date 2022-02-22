@@ -162,7 +162,7 @@ void report(const Hero &hero);
 void lucha(Hero &hero, Enemy &enemy);
 void fight(Hero &hero,Enemy &enemy);
 void runawayfuncion(Hero &hero, Enemy &enemy);
-void special(Hero &hero);
+void special(Hero &hero, Enemy &enemy);
 
 
 /**************************************/
@@ -213,7 +213,7 @@ void showMenu(Hero &hero, Enemy &enemy){
   switch (opcion) {
     case 49: fight(hero,enemy);break;
     case 50: runawayfuncion(hero,enemy);break;
-    case 51: special(hero);break;
+    case 51: special(hero,enemy);break;
     case 52: report(hero);break;
     case 113: break;
     default :cout << "Error Wrong Option" <<endl;
@@ -320,17 +320,17 @@ void fight(Hero &hero,Enemy &enemy){
 }
 
 
-void special(Hero &hero){/*
+void special(Hero &hero, Enemy &enemy){
   if (hero.special == true){
     hero.special = false;
-    lucha(dadoheore)=(dadoheore*3)
-    lucha();
+    int dadospecial;
+    dadospecial=rollDice();
     
 
   }else{
     cout << "ERROR: special not available" << endl;
-    showMenu();
-  }*/
+    showMenu(hero,enemy);
+  }
 }
 
 
