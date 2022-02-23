@@ -44,7 +44,6 @@ int rollDice(){   //funcion de dado
 Hero createHero(){
   Hero hero;
   /*variables auxiliares*/
-  char nombre_Heore[KNAME]; //nombre de heroe
   bool error,error2; //control de errores
   float ataque, defensa; //ataque/defensa
   int ataquetotal, defensatotal; //ataque y defensa otorgada al heroe
@@ -52,16 +51,17 @@ Hero createHero(){
   
   do{
     cout << "Enter hero name: ";
-    cin.getline(nombre_Heore, KNAME-1);
+    cin.getline(hero.name, KNAME-1);
     error = true ;
-    longitud = strlen(nombre_Heore); 
-    for(int i=0; i<longitud; i++){
-      if((isalnum(nombre_Heore[i]!=1))&&(nombre_Heore[i]!='\0')){
-      cout << "ERROR: wrong name" << endl;
-      error = false;
+    longitud = strlen(hero.name); 
+    for(int i=0; i<longitud; ++i){
+      if((isalnum(hero.name[i]== 0 ))){
+        cout << hero.name[i]<<endl;
+        cout << "ERROR: wrong name" << endl;
+        error = false;
       }
     }    
-    if ((isalpha(nombre_Heore[0]) == 0)){ //prueba primera letra inicial
+    if ((isalpha(hero.name[0]) == 0)){ //prueba primera letra inicial
       cout << "ERROR: wrong name" << endl;
       error = false;
     }
@@ -89,7 +89,6 @@ Hero createHero(){
       
     }
   }while (error2 != 0);
-  hero.name[KNAME] = nombre_Heore[KNAME];
   hero.features.attack = ataquetotal;
   hero.features.defense = defensatotal;
   hero.features.hp = (hero.features.defense*2);
@@ -106,8 +105,7 @@ void name_enemy(Enemy &enemy);
 Enemy createEnemy(){
   Enemy enemy;
   int num_dado;
-  enemy.features.defense= 0;
-    num_dado = rollDice();
+  num_dado = rollDice();
     if (num_dado <=6) {
       enemy.name= (AXOLOTL);
       enemy.features.attack= 40;
@@ -182,8 +180,15 @@ void runawayfuncion(Hero &hero, Enemy &enemy){
   
 }
 void report(const Hero &hero){
-  char printspecial;
-    cout << "Name: " << hero.name << endl
+  string printspecial;
+  if (hero.special == true){
+    printspecial = "yes";
+  }
+  else{
+    printspecial = "no";
+  }
+    cout << "[Report]" << endl
+      << "Name: " << hero.name << endl
       << "Attack: " << hero.features.attack << endl
       << "Defense: " << hero.features.defense << endl
       << "Health points: " << hero.features.hp << endl
@@ -191,12 +196,12 @@ void report(const Hero &hero){
       <<  "Runaways: " << hero.runaways << endl
       << "Exp: " << hero.exp << endl
       << "Enemies killed: "<<endl
-      << "- Axolot: "<<hero.kills[0]<<endl
+      << "- Axolotl: "<<hero.kills[0]<<endl
       << "- Troll: "<<hero.kills[1]<<endl
       << "- Orc: "<<hero.kills[2]<<endl
       << "- Hellhound: "<<hero.kills[3]<<endl
       << "- Dragon: "<<hero.kills[4]<<endl
-      << "Total: "<<(hero.kills[0]+hero.kills[1]+hero.kills[2]+hero.kills[3]+hero.kills[4])<<endl;
+      << "- Total: "<<(hero.kills[0]+hero.kills[1]+hero.kills[2]+hero.kills[3]+hero.kills[4])<<endl;
   
 }
 
@@ -214,7 +219,7 @@ void showMenu(Hero &hero, Enemy &enemy){
     case 49: fight(hero,enemy);break;
     case 50: runawayfuncion(hero,enemy);break;
     case 51: special(hero,enemy);break;
-    case 52: report(hero);break;
+    case 52: report(hero);showMenu(hero,enemy);break;
     case 113: break;
     default :cout << "Error Wrong Option" <<endl;
       showMenu(hero,enemy);
@@ -223,73 +228,8 @@ void showMenu(Hero &hero, Enemy &enemy){
   
 }
 
-
-
-
-void fight(Hero &hero,Enemy &enemy){   
-  /*lanzamiento de dados*/
-    int dadoheore = rollDice();
-      dadoheore = (dadoheore*5);
-    int dadoenemy = rollDice();
-      dadoenemy = (dadoenemy*5);
-  /*calculo ataque el ataque y la defensa total*/
-    int ataque_inicial = hero.features.attack;
-      ataque_inicial = (dadoheore+ataque_inicial);
-    int defensa_inicial;
-      defensa_inicial = (dadoenemy+enemy.features.defense);
-  /*calculo puntos de daño*/
-    int hit_points;
-      hit_points = (ataque_inicial-defensa_inicial);
-      if (hit_points<=0){
-        hit_points=0;
-      }  
-  /*vida del enemigo*/
-    int vida_enemy;
-    vida_enemy= (enemy.features.hp-hit_points);
-    enemy.features.hp=vida_enemy;
-  /*salida del ataque por el terminal*/
-    cout << "[Hero -> Enemy]" << endl
-         << "Attack: " << hero.features.attack << " + " << dadoheore << endl
-         << "Defense: " << enemy.features.defense << " + " << dadoenemy << endl
-         << "Hit Point: " << hit_points << endl
-         << "Enemy health points: " << vida_enemy << endl;
-  /*inicio ataque del enemigo*/
-    if (vida_enemy>0){
-      dadoenemy = rollDice();
-      dadoenemy = (dadoenemy*5); 
-      dadoheore = rollDice();
-      dadoheore = (dadoheore*5);
-
-      int ataque_inicial_eneMY = enemy.features.attack;
-        ataque_inicial_eneMY= (dadoenemy+ataque_inicial_eneMY);
-      int defensa_inicial_h = hero.features.defense;
-        defensa_inicial_h= (dadoheore+defensa_inicial_h);
-
-      int hit_points_eneMY;
-        hit_points_eneMY = (ataque_inicial_eneMY-defensa_inicial_h);
-        if (hit_points_eneMY<=0){hit_points_eneMY=0; } 
-        
-        
-      int vida_heroe;
-      
-      vida_heroe= (hero.features.hp-hit_points_eneMY);
-      hero.features.hp=vida_heroe;
-      cout << "[Enemy -> Hero]" << endl
-          << "Attack: "<<enemy.features.attack<<"+"<<dadoenemy << endl
-          << "Defense: "<<hero.features.defense<<"+"<<dadoheore << endl
-          << "Hit Point: "<< hit_points_eneMY << endl
-          << "Hero health points: "<<vida_heroe << endl;
-      if (vida_heroe>0) {
-        showMenu(hero,enemy);
-      }
-      else{
-        cout << "You are dead" << endl;
-        report(hero);
-        
-      }
-    }else{    
-    
-      int xp;
+void experiencia (Hero &hero, Enemy &enemy){
+  int xp;
       xp = hero.exp;
       cout << "Enemy Killed" << endl;
       if (enemy.name == AXOLOTL ){
@@ -313,6 +253,74 @@ void fight(Hero &hero,Enemy &enemy){
         hero.kills[4]++;
       }
       createEnemy();    //por esto a lo mejor no se recargan los int de arriba
+      
+}
+
+
+void fight(Hero &hero,Enemy &enemy){ 
+    /*lanzamiento de dados*/
+    int dadoheore = rollDice();
+      dadoheore = (dadoheore*5);
+    int dadoenemy = rollDice();
+      dadoenemy = (dadoenemy*5);
+  /*calculo ataque el ataque y la defensa total*/
+    int ataque_inicial = hero.features.attack;
+      ataque_inicial = (dadoheore+ataque_inicial);
+    int defensa_inicial;
+      defensa_inicial = (dadoenemy+enemy.features.defense);
+  /*calculo puntos de daño*/
+    int hit_points;
+      hit_points = (ataque_inicial-defensa_inicial);
+      if (hit_points<=0){
+        hit_points=0;
+      }  
+  /*vida del enemigo*/
+    
+    enemy.features.hp= (enemy.features.hp-hit_points);
+    if (enemy.features.hp<=0){enemy.features.hp=0; }
+    
+
+  /*salida del ataque por el terminal*/
+    cout << "[Hero -> Enemy]" << endl
+         << "Attack: " << hero.features.attack << " + " << dadoheore << endl
+         << "Defense: " << enemy.features.defense << " + " << dadoenemy << endl
+         << "Hit points: " << hit_points << endl
+         << "Enemy health points: " << enemy.features.hp << endl;
+  /*inicio ataque del enemigo*/
+    if (enemy.features.hp>0){
+      dadoenemy = rollDice();
+      dadoenemy = (dadoenemy*5); 
+      dadoheore = rollDice();
+      dadoheore = (dadoheore*5);
+
+      int ataque_inicial_eneMY = enemy.features.attack;
+        ataque_inicial_eneMY= (dadoenemy+ataque_inicial_eneMY);
+      int defensa_inicial_h = hero.features.defense;
+        defensa_inicial_h= (dadoheore+defensa_inicial_h);
+
+      int hit_points_eneMY;
+        hit_points_eneMY = (ataque_inicial_eneMY-defensa_inicial_h);
+        if (hit_points_eneMY<=0){hit_points_eneMY=0; } 
+        
+        
+           
+      hero.features.hp= (hero.features.hp-hit_points_eneMY);
+      if(hero.features.hp<=0){hero.features.hp=0;}
+      cout << "[Enemy -> Hero]" << endl
+          << "Attack: "<<enemy.features.attack<<"+"<<dadoenemy << endl
+          << "Defense: "<<hero.features.defense<<"+"<<dadoheore << endl
+          << "Hit points: "<< hit_points_eneMY << endl
+          << "Hero health points: "<<hero.features.hp << endl;
+      if (hero.features.hp>0) {
+        showMenu(hero,enemy);
+      }
+      else{
+        cout << "You are dead" << endl;
+        report(hero);
+        
+      }
+    }else{    
+      experiencia (hero,enemy);
       showMenu(hero,enemy);
     }
   
