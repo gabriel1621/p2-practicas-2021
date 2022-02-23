@@ -54,8 +54,8 @@ Hero createHero(){
     cin.getline(hero.name, KNAME-1);
     error = true ;
     longitud = strlen(hero.name); 
-    for(int i=0; i<longitud; ++i){
-      if((isalnum(hero.name[i]== 0 ))){
+    for(int i=0; i<longitud; i++){
+      if((isalnum(hero.name[i]== 0 ))&& hero.name[i]!='\0'){
         cout << hero.name[i]<<endl;
         cout << "ERROR: wrong name" << endl;
         error = false;
@@ -380,30 +380,31 @@ int main(int argc,char *argv[]){
     hero = createHero();
     enemy = createEnemy();
     char opcion;
-    int huida=0;
+    bool huida = true;
       do{
         showMenu(hero,enemy);
         cin >> opcion;
         cin.get();
-        if (opcion='2'){
-          huida++;
-          if (huida>2){
-            cout << "ERROR: cannot run away"<<endl;
-            
-          }
-          
-        }
-        else{huida=0;}
-        switch (opcion) {
-            case '1': fight(hero,enemy);break;
-            case '2': runawayfuncion(hero,enemy);
-                      break;
-            case '3': special(hero,enemy);break;
+        
+          switch (opcion) {
+            case '1': huida=true; fight(hero,enemy);break;
+            case '2': if(huida==false){
+                        cout << "ERROR: cannot run away";
+                        break;
+                      }else{
+                        huida=false;
+                        runawayfuncion(hero,enemy);
+                        break;
+                      }
+              
+            case '3': huida=true; special(hero,enemy);break;
             case '4': report(hero);break;
             case 'q': break;
             default :cout << "Error Wrong Option" <<endl;
             
           }
+             
+        
         
      }while (opcion!='q' && hero.features.hp>0);
     
