@@ -446,16 +446,18 @@ int main(int argc,char *argv[]){
     Enemy enemy;
     hero = createHero();
     enemy = createEnemy();
-    char opcion;
-    bool huida = true;
+    char opcion; //variable que usara el menu
+    bool huida = true; // esta variable permitira o no la opcion runaway segun las veces usada
       do{
+        /*muestro el menu y obtengo el vañor*/
         showMenu(hero,enemy);
         cin >> opcion;
         cin.get();
         
           switch (opcion) {
-            case '1': huida=true; fight(hero,enemy);break;
-            case '2': if(huida==false){
+            case '1': huida=true; fight(hero,enemy);break; //cambio el valor de huida para poder volver a usarla
+
+            case '2': if(huida==false){ //compruebo si esta disponible la opcion runaway
                         cout << "ERROR: cannot run away";
                         break;
                       }else{
@@ -463,15 +465,14 @@ int main(int argc,char *argv[]){
                         runawayfuncion(hero,enemy);
                         break;
                       }
+                      
             case '3': huida=true; special(hero,enemy);break;
             case '4': report(hero);break;
             case 'q': break;
             default :cout << "Error Wrong Option" <<endl;
             
           }
-             
-        
-        
+                
      }while (opcion!='q' && hero.features.hp>0);
     
     return 0;
