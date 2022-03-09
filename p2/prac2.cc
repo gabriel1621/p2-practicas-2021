@@ -88,17 +88,19 @@ void showMainMenu() {
 }
 /*mostrará un listado con información resumida de los libros del catálogo*/
 void showCatalog(const BookStore &bookStore) {
-  int canti_libros=(int)bookStore.books.size();
-  for (int a=0;a<=canti_libros;a++){
-    cout<< bookStore.books[a].id<<". "<<bookStore.books[a].title<<" ("<<bookStore.books[a].year<<"), "
-    <<bookStore.books[a].price<<endl;
+  int canti_libros=bookStore.books.size();
+  for (int a=0;a<canti_libros;a++){
+    cout<< bookStore.books[a].id
+        << ". " << bookStore.books[a].title
+        << " (" << bookStore.books[a].year << "), "
+        << bookStore.books[a].price <<endl;
   }
 }
 
 void showExtendedCatalog(const BookStore &bookStore) {
   int canti_libros=(int)bookStore.books.size();
   char comillas = '\"';
-  for (int a=0;a<=canti_libros;a++){
+  for (int a=0;a<canti_libros;a++){
     cout << comillas << bookStore.books[a].title << comillas
          <<","
          << comillas << bookStore.books[a].authors << comillas
@@ -129,28 +131,31 @@ bool control_error(string nombre){
 }
 
 string create_slug(string nombre){
-  string slug;
+  string nombre_limpio;
   int recorrido=0;
+  char chars[] ="--";
 
   recorrido=nombre.length();
-
+  
   for(int w=0;w<recorrido;w++){
     nombre[w]=tolower(nombre[w]);//convertir a minusculas
+    
   }
+  
 
   for(int r=0;r<recorrido;r++){
-    if(isalnum(nombre[r])!=0){
+    if(isalnum(nombre[r])==0){
        nombre[r]='-';   
     }                       //convertir caracters especiales  a "-"
   }
-
+  cout << nombre<<endl;
   for(int t=0;t<recorrido;t++){
-    if ((nombre[t] =='-') && (nombre[t+1] == '-')){
+    str.erase (std::remove(str.begin(), str.end(), chars[t]), str.end());
 
-    }
-    //eliminar "-" seguidos
+
   }
-  return slug;
+  
+  return nombre;
 }
 
 void addBook(BookStore &bookStore) {
@@ -220,6 +225,7 @@ void addBook(BookStore &bookStore) {
 
     if (longitud>0){
       nuevo_libro.price= stof(precio);
+     
       
     }
     if(nuevo_libro.price>=0){
@@ -237,6 +243,7 @@ void addBook(BookStore &bookStore) {
   }while(control4!=false);
 
   nuevo_libro.slug=create_slug(nuevo_libro.title);
+  cout << "slug "<<nuevo_libro.slug << endl;
   nuevo_libro.id=bookStore.nextId;
   bookStore.nextId++;
   bookStore.books.push_back(nuevo_libro);
@@ -245,7 +252,7 @@ void addBook(BookStore &bookStore) {
 
 void deleteBook(BookStore &bookStore) {
   string id_borrar;
-  int identificador=0, id_book, fail;
+  unsigned int identificador=0,fail;
   cout << "Enter book id: ";
   getline(cin,id_borrar);
   if (id_borrar.size()<=0){
@@ -263,10 +270,9 @@ void deleteBook(BookStore &bookStore) {
 
   if (fail==0){
     error(ERR_ID);
-  }
-   
+  }  
   else{
-    bookStore.books.erase(bookStore.books.begin()+identificador);
+    bookStore.books.erase(bookStore.books.begin() +identificador);
 
   }
 
