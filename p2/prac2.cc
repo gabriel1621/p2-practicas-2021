@@ -7,7 +7,7 @@
 using namespace std;
 
 const int KMAXSTRING = 50;
-
+const char comillas = '"';
 enum Error {
   ERR_OPTION,
   ERR_BOOK_TITLE,
@@ -100,7 +100,7 @@ void showCatalog(const BookStore &bookStore) {
 
 void showExtendedCatalog(const BookStore &bookStore) {
   int canti_libros=(int)bookStore.books.size();
-  char comillas = '\"';
+  
   for (int a=0;a<canti_libros;a++){
     cout << comillas << bookStore.books[a].title << comillas
          <<","
@@ -165,7 +165,7 @@ void addBook(BookStore &bookStore) {
   
   /*nombre*/
   do{
-    cout << "Enter book title:";
+    cout << "Enter book title: ";
     getline(cin,nuevo_libro.title);
     control1=control_error(nuevo_libro.title);
     if (control1==true){
@@ -289,67 +289,61 @@ void showImporExportMenu(){
 }
 
 void importFromCsv(BookStore &bookStore){
+  Book nuevo_libro_import;
   ifstream fichero;
   string file_name;
 
   cout << "Enter filename:";
   getline(cin,file_name);
-  
-  if(fichero.is_open(file_name)){ //compruebo si se puede abrir
+  fichero.open(file_name); //abro el fichero
 
-    fichero.open(file_name); //abro el fichero
+  if(fichero.is_open()){ //compruebo si se puede abrir
     string libro_importado;
-
+      
     do{
 
       while(getline(fichero,libro_importado)){
-      cin >> nuevo_libro.title;
-      cin.get();
-      cin >> nuevo_libro.authors;
-      cin.get();
-      cin >> nuevo_libro.year;
-      cin.get();
-      cin >> nuevo_libro.price;
-      cin.get();
-      nuevo_libro=addBook(bookStore);
+        cout << libro_importado;/*
+        libro_importado >> nuevo_libro_import.title;
+        libro_importado >> nuevo_libro_import.authors;
+        libro_importado >> nuevo_libro.year;
+        libro_importado >> nuevo_libro_import.slug;
+        libro_importado >> nuevo_libro_import.price;
+
+        
+        nuevo_libro_import.id=bookStore.nextId;
+        bookStore.nextId++;
+        bookStore.books.push_back(nuevo_libro_import);*/
       }
 
     }while(!fichero.eof()); //compruebo que ha llegado al final
       
 
-    fichero.close(file_name); //cierro el fichero
+    fichero.close(); //cierro el fichero
   }else{
     error(ERR_FILE);
   }
 }
-string export_catalog(string catalogo){
-  int canti_libros=(int)bookStore.books.size();
-  char libros_db[];
-  char comillas = '\"';
-  for (int a=0;a<canti_libros;a++){
-    libros_db[a] = [ comillas , bookStore.books[a].title , comillas
-         ,","
-         , comillas , bookStore.books[a].authors << comillas
-         <<","
-         << bookStore.books[a].year
-         <<","
-         << comillas << bookStore.books[a].slug << comillas
-         <<","
-         <<bookStore.books[a].price];
-  }
-  return catalogo
-}
+
 void exportToCsv(const BookStore &bookStore){
   ofstream ficheroEsc;
   string file_name, catalogo;
 
   cout << "Enter filename:";
   getline(cin,file_name);
-
+  ficheroEsc.open(file_name,ios::out); //abro y si existe lo machaca
   if (ficheroEsc.is_open()){
-    ficheroEsc.open(file_name,ios::out); //abro y si existe lo machaca
-    catalogo = export_catalog(catalogo);
-    ficheroEsc << catalogo;  //guardo el catalogo en el fichero
+    
+    int canti_libros=(int)bookStore.books.size();
+    
+    
+    for (int a=0;a<canti_libros;a++){
+        ficheroEsc <<  comillas << bookStore.books[a].title << comillas << ","
+         << comillas << bookStore.books[a].authors << comillas << ","
+         << bookStore.books[a].year << ","
+         << comillas << bookStore.books[a].slug << comillas << ","
+         << bookStore.books[a].price;
+    }
 
     ficheroEsc.close(); //cierro el fichero
   }
