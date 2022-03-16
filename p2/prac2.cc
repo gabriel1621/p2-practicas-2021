@@ -3,6 +3,8 @@
 #include <cctype>
 #include <cstring>
 #include <fstream> //para trabajar con ficheros
+#include <sstream>
+
 
 using namespace std;
 
@@ -148,12 +150,10 @@ string create_slug(string nombre){
     if(isalnum(nombre[r])==0){
        nombre[r]='-';   
     }                       //convertir caracters especiales  a "-"
-  }
-  /*
-  for(int t=0;t<recorrido;t++){
-    
-
-
+  }/*
+  stringstream input_stringstream(nombre);
+  while(getline(input_stringstream,nombre_limpio,'-')){
+    cout << nombre_limpio;
   }*/
   
   return nombre;
@@ -289,7 +289,6 @@ void showImporExportMenu(){
 }
 
 void importFromCsv(BookStore &bookStore){
-  Book nuevo_libro_import;
   ifstream fichero;
   string file_name;
 
@@ -299,11 +298,31 @@ void importFromCsv(BookStore &bookStore){
 
   if(fichero.is_open()){ //compruebo si se puede abrir
     string libro_importado;
+    int i=0;
       
     do{
 
-      while(getline(fichero,libro_importado)){
-        cout << libro_importado;/*
+      while(getline(fichero,libro_importado, '"')){
+        
+        stringstream input_stringstream(libro_importado);                      // Convertir la cadena a un stream
+
+        string nombre, apellido, correo, paginaWeb;
+        // Extraer
+        getline(input_stringstream, nombre, ',');
+        getline(input_stringstream, apellido, ',');
+        getline(input_stringstream, correo, ',');
+        getline(input_stringstream, paginaWeb, ',');
+
+         cout << "Nombre: " << nombre << endl;
+         
+      
+        
+        
+
+        
+        
+        
+        /*
         libro_importado >> nuevo_libro_import.title;
         libro_importado >> nuevo_libro_import.authors;
         libro_importado >> nuevo_libro.year;
