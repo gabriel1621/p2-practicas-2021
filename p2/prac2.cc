@@ -289,8 +289,9 @@ void showImporExportMenu(){
 }
 
 void importFromCsv(BookStore &bookStore){
+  Book nuevo_libro_import;
   ifstream fichero;
-  string file_name;
+  string file_name, titulo;
 
   cout << "Enter filename:";
   getline(cin,file_name);
@@ -298,22 +299,24 @@ void importFromCsv(BookStore &bookStore){
 
   if(fichero.is_open()){ //compruebo si se puede abrir
     string libro_importado;
-    int i=0;
+    
       
     do{
 
-      while(getline(fichero,libro_importado, '"')){
+      while(getline(fichero,libro_importado, '"')){}
         
         stringstream input_stringstream(libro_importado);                      // Convertir la cadena a un stream
 
-        string nombre, apellido, correo, paginaWeb;
+        
         // Extraer
-        getline(input_stringstream, nombre, ',');
-        getline(input_stringstream, apellido, ',');
-        getline(input_stringstream, correo, ',');
-        getline(input_stringstream, paginaWeb, ',');
+        getline(input_stringstream, titulo ,',');/*
+        getline(input_stringstream, nuevo_libro_import.authors, ',');
+        getline(input_stringstream, nuevo_libro_import.year, ',');
+        getline(input_stringstream, nuevo_libro_import.slug, ',');
+        getline(input_stringstream, nuevo_libro_import.price, ',');*/
+        
 
-         cout << "Nombre: " << nombre << endl;
+         cout << "Nombre: " << titulo<< endl;
          
       
         
@@ -322,18 +325,13 @@ void importFromCsv(BookStore &bookStore){
         
         
         
-        /*
-        libro_importado >> nuevo_libro_import.title;
-        libro_importado >> nuevo_libro_import.authors;
-        libro_importado >> nuevo_libro.year;
-        libro_importado >> nuevo_libro_import.slug;
-        libro_importado >> nuevo_libro_import.price;
+        
 
         
         nuevo_libro_import.id=bookStore.nextId;
         bookStore.nextId++;
-        bookStore.books.push_back(nuevo_libro_import);*/
-      }
+        bookStore.books.push_back(nuevo_libro_import);
+      
 
     }while(!fichero.eof()); //compruebo que ha llegado al final
       
@@ -346,7 +344,7 @@ void importFromCsv(BookStore &bookStore){
 
 void exportToCsv(const BookStore &bookStore){
   ofstream ficheroEsc;
-  string file_name, catalogo;
+  string file_name;
 
   cout << "Enter filename:";
   getline(cin,file_name);
@@ -372,9 +370,45 @@ void exportToCsv(const BookStore &bookStore){
 }
 
 void loadData(BookStore &bookStore){
+  string preguntaSeguridad;
+  bool comprobar;
+  
+  do{
+    cout << "All data will be erased, do you want to continue (Y/N)?: ";
+    getline(cin,preguntaSeguridad);
+    comprobar = true;
+
+    if ((preguntaSeguridad == "Y")||(preguntaSeguridad == "y")){
+      comprobar = false;
+      cout << "Enter filename: ";
+    }
+    if((preguntaSeguridad == "N")||(preguntaSeguridad == "n")){
+      comprobar = false;
+      
+    }
+    
+
+  }while( comprobar == true);
+  
 }
 
-void saveData(const BookStore &bookStore){
+void saveData(const BookStore &bookStore ){
+  char fileName[9000];
+  ofstream ficherBinGuardar;
+  cout << "Enter filename:";
+  cin >> fileName;
+
+  ficherBinGuardar.open(fileName,ios::out | ios::binary);
+
+  if (ficherBinGuardar.is_open()){
+
+    ficherBinGuardar.close();
+
+  }else{
+    error(ERR_FILE);
+  }
+
+
 }
 
 void importExportMenu(BookStore &bookStore) {
