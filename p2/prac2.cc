@@ -10,6 +10,8 @@ using namespace std;
 
 const int KMAXSTRING = 50;
 const char comillas = '"';
+const string NAMEFILE = "Enter filename:";
+
 enum Error {
   ERR_OPTION,
   ERR_BOOK_TITLE,
@@ -150,11 +152,19 @@ string create_slug(string nombre){
     if(isalnum(nombre[r])==0){
        nombre[r]='-';   
     }                       //convertir caracters especiales  a "-"
-  }/*
-  stringstream input_stringstream(nombre);
-  while(getline(input_stringstream,nombre_limpio,'-')){
-    cout << nombre_limpio;
-  }*/
+  }
+  int o=0;
+  for(int t=0;t<recorrido;t++){
+    o=t;
+    if(nombre[t]=='-'){
+      o++;
+      if(nombre[o]=='-'){
+        nombre.erase(t,1);
+      }
+
+    }
+    
+  }
   
   return nombre;
 }
@@ -291,48 +301,101 @@ void showImporExportMenu(){
 void importFromCsv(BookStore &bookStore){
   Book nuevo_libro_import;
   ifstream fichero;
-  string file_name, titulo;
+  string file_name;
+  int posicionComa, inicio=1;
 
-  cout << "Enter filename:";
+  cout << NAMEFILE;
   getline(cin,file_name);
   fichero.open(file_name); //abro el fichero
 
   if(fichero.is_open()){ //compruebo si se puede abrir
-    string libro_importado;
-    
+    string libro_importado, nueva2,nueva3,nueva4,nueva5;
+    string nombre, autor,year,slug,precio;
+    bool control1,control2,control3,control4;
       
     do{
+      while(getline(fichero,libro_importado)){
+        /*Extrael titulo*/
+          posicionComa=libro_importado.find(",");
+          nombre = libro_importado.substr(inicio,posicionComa-2);
+          nuevo_libro_import.title=nombre;
 
-      while(getline(fichero,libro_importado, '"')){}
-        
-        stringstream input_stringstream(libro_importado);                      // Convertir la cadena a un stream
+          control1=control_error(nuevo_libro_import.title);
+          if (control1==true){
+            error(ERR_BOOK_TITLE);
+          }
+          if (control1==false){
+              /*autor*/
+                nueva2 = libro_importado.erase(0,posicionComa+1);
+                posicionComa=nueva2.find(",");
+                autor = nueva2.substr(inicio,posicionComa-2);
 
-        
-        // Extraer
-        getline(input_stringstream, titulo ,',');/*
-        getline(input_stringstream, nuevo_libro_import.authors, ',');
-        getline(input_stringstream, nuevo_libro_import.year, ',');
-        getline(input_stringstream, nuevo_libro_import.slug, ',');
-        getline(input_stringstream, nuevo_libro_import.price, ',');*/
-        
+                nuevo_libro_import.authors=autor;
+                control2=control_error(nuevo_libro_import.authors);
 
-         cout << "Nombre: " << titulo<< endl;
-         
+                if (control2==true){
+                  error(ERR_BOOK_AUTHORS);
+                }
+              if(control2==false){
+                /*año*/
+                  nueva3 = nueva2.erase(0,posicionComa+1);
+                  posicionComa=nueva3.find(",");
+                  year = nueva3.substr(0,posicionComa);
+                  
+                  if ((year.length()>0) && (year != " ")){
+                
+                    nuevo_libro_import.year = stoi(year);//convertir string a entero
+
+                  }
+                  if((nuevo_libro_import.year>=1440) && (nuevo_libro_import.year<=2022)){
+
+                
+                    control3=false;
+                
+
+                  }else{
+                    error(ERR_BOOK_DATE);
+                    control3=true;
+                
+                  }
+                   /*slug*/
+                    nueva4 = nueva3.erase(0,posicionComa+1);
+                    posicionComa=nueva4.find(",");
+                    slug = nueva4.substr(inicio,posicionComa-2);
+                    nuevo_libro_import.slug=slug;
+
+                if(control3==false){
+                /*price*/
+                  nueva5 = nueva4.erase(0,posicionComa+1);
+                  posicionComa=nueva5.find(",");
+                  precio = nueva5.substr(0,posicionComa);
+                  
+
+                  if (precio.length()>0){
+                    nuevo_libro_import.price= stof(precio);
+              
+                  }
+                  if(nuevo_libro_import.price>=0){
+                    
+                    control4=false;
+                  }
+                  else{
+                    error(ERR_BOOK_PRICE);
+                    control4=true;
+                  }
+
+                  nuevo_libro_import.id=bookStore.nextId;
+                  bookStore.nextId++;
+                  bookStore.books.push_back(nuevo_libro_import);
+                  
+                }
+              }
+              
+          }
+
+
+      }
       
-        
-        
-
-        
-        
-        
-        
-
-        
-        nuevo_libro_import.id=bookStore.nextId;
-        bookStore.nextId++;
-        bookStore.books.push_back(nuevo_libro_import);
-      
-
     }while(!fichero.eof()); //compruebo que ha llegado al final
       
 
@@ -346,7 +409,7 @@ void exportToCsv(const BookStore &bookStore){
   ofstream ficheroEsc;
   string file_name;
 
-  cout << "Enter filename:";
+  cout << NAMEFILE;
   getline(cin,file_name);
   ficheroEsc.open(file_name,ios::out); //abro y si existe lo machaca
   if (ficheroEsc.is_open()){
@@ -395,7 +458,7 @@ void loadData(BookStore &bookStore){
 void saveData(const BookStore &bookStore ){
   char fileName[9000];
   ofstream ficherBinGuardar;
-  cout << "Enter filename:";
+  cout << NAMEFILE;
   cin >> fileName;
 
   ficherBinGuardar.open(fileName,ios::out | ios::binary);
