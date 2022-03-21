@@ -437,8 +437,11 @@ void exportToCsv(const BookStore &bookStore){
 }
 
 void loadData(BookStore &bookStore){
+  ifstream ficheroBinLec;
   string preguntaSeguridad;
   bool comprobar;
+  char fileName[900];
+
   
   do{
     cout << "All data will be erased, do you want to continue (Y/N)?: ";
@@ -447,7 +450,25 @@ void loadData(BookStore &bookStore){
 
     if ((preguntaSeguridad == "Y")||(preguntaSeguridad == "y")){
       comprobar = false;
-      cout << "Enter filename: ";
+      cout << NAMEFILE;
+      cin >> fileName;
+      cin.get();
+      ficheroBinLec.open(fileName,ios::in | ios::binary)
+      if (ficheroBinLec,is_open()){
+        BinBook binLibroImport
+        bookStore.name;
+        bookStore.nextId;
+        ficheroBinLec.seekg(3*sizeof(bookStore), ios::beg);
+        while(ficheroBinLec.read((char *)&bookStore, sizeof(bookStore))){
+          binLibroImport.title;
+        }
+
+        ficheroBinLec.close();
+
+      }else{
+        error(ERR_FILE);
+      }
+
     }
     if((preguntaSeguridad == "N")||(preguntaSeguridad == "n")){
       comprobar = false;
@@ -464,12 +485,20 @@ void saveData(const BookStore &bookStore ){
   ofstream ficherBinGuardar;
   cout << NAMEFILE;
   cin >> fileName;
+  cin.get();
 
   ficherBinGuardar.open(fileName,ios::out | ios::binary);
 
   if (ficherBinGuardar.is_open()){
+    if (ficheroBinLec,is_open()){
+      
 
-    ficherBinGuardar.close();
+      ficherBinGuardar.close();
+    }else{
+      error(ERR_FILE);
+    }
+
+    
 
   }else{
     error(ERR_FILE);
