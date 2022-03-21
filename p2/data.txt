@@ -1,3 +1,3 @@
 "La Celestina","Fernando de Rojas",1499,"la-celestina",10.4
-"Fuenteovejuna","Lope de Vega", ,"fuenteovejuna",9.95
+"Fuenteovejuna","Lope de Vega",1985,"fuenteovejuna",9.95
 "Arroloovejuna","Lope de Vega",1619,"fuenteovejuna",9.95

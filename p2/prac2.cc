@@ -299,7 +299,7 @@ void showImporExportMenu(){
 }
 
 void importFromCsv(BookStore &bookStore){
-  Book nuevo_libro_import;
+  
   ifstream fichero;
   string file_name;
   int posicionComa, inicio=1;
@@ -315,9 +315,11 @@ void importFromCsv(BookStore &bookStore){
       
     do{
       while(getline(fichero,libro_importado)){
+        Book nuevo_libro_import;
         /*Extrael titulo*/
-          posicionComa=libro_importado.find(",");
-          nombre = libro_importado.substr(inicio,posicionComa-2);
+          libro_importado.erase(0,1);
+          posicionComa=libro_importado.find(comillas);
+          nombre = libro_importado.substr(0,posicionComa);
           nuevo_libro_import.title=nombre;
 
           control1=control_error(nuevo_libro_import.title);
@@ -326,9 +328,10 @@ void importFromCsv(BookStore &bookStore){
           }
           if (control1==false){
               /*autor*/
-                nueva2 = libro_importado.erase(0,posicionComa+1);
-                posicionComa=nueva2.find(",");
-                autor = nueva2.substr(inicio,posicionComa-2);
+                nueva2 = libro_importado.erase(0,posicionComa+3);
+                posicionComa=nueva2.find(comillas);
+                autor = nueva2.substr(0,posicionComa);
+                
 
                 nuevo_libro_import.authors=autor;
                 control2=control_error(nuevo_libro_import.authors);
@@ -338,9 +341,10 @@ void importFromCsv(BookStore &bookStore){
                 }
               if(control2==false){
                 /*año*/
-                  nueva3 = nueva2.erase(0,posicionComa+1);
-                  posicionComa=nueva3.find(",");
-                  year = nueva3.substr(0,posicionComa);
+                  nueva3 = nueva2.erase(0,posicionComa+2);
+                  posicionComa=nueva3.find(comillas);
+                  year = nueva3.substr(0,posicionComa-1);
+                  
                   
                   if ((year.length()>0) && (year != " ")){
                 
@@ -360,15 +364,15 @@ void importFromCsv(BookStore &bookStore){
                   }
                    /*slug*/
                     nueva4 = nueva3.erase(0,posicionComa+1);
-                    posicionComa=nueva4.find(",");
-                    slug = nueva4.substr(inicio,posicionComa-2);
+                    
+                    posicionComa=nueva4.find(comillas);
+                    slug = nueva4.substr(0,posicionComa);
                     nuevo_libro_import.slug=slug;
 
                 if(control3==false){
                 /*price*/
-                  nueva5 = nueva4.erase(0,posicionComa+1);
-                  posicionComa=nueva5.find(",");
-                  precio = nueva5.substr(0,posicionComa);
+                  precio = nueva4.erase(0,posicionComa+2);
+                  
                   
 
                   if (precio.length()>0){
