@@ -160,6 +160,7 @@ string create_slug(string nombre){
       o++;
       if(nombre[o]=='-'){
         nombre.erase(t,1);
+        t--;
       }
 
     }
@@ -297,106 +298,24 @@ void showImporExportMenu(){
        <<"b- Back to main menu"<< endl
        <<"Option: ";
 }
-
+void createBookImport(BookStore &bookStore, string libro_importado);
 void importFromCsv(BookStore &bookStore){
   
   ifstream fichero;
   string file_name;
-  int posicionComa, inicio=1;
+  
 
   cout << NAMEFILE;
   getline(cin,file_name);
   fichero.open(file_name); //abro el fichero
 
   if(fichero.is_open()){ //compruebo si se puede abrir
-    string libro_importado, nueva2,nueva3,nueva4,nueva5;
-    string nombre, autor,year,slug,precio;
-    bool control1,control2,control3,control4;
+    string libro_importado;
+    
       
     do{
       while(getline(fichero,libro_importado)){
-        Book nuevo_libro_import;
-        /*Extrael titulo*/
-          libro_importado.erase(0,1);
-          posicionComa=libro_importado.find(comillas);
-          nombre = libro_importado.substr(0,posicionComa);
-          nuevo_libro_import.title=nombre;
-
-          control1=control_error(nuevo_libro_import.title);
-          if (control1==true){
-            error(ERR_BOOK_TITLE);
-          }
-          if (control1==false){
-              /*autor*/
-                nueva2 = libro_importado.erase(0,posicionComa+3);
-                posicionComa=nueva2.find(comillas);
-                autor = nueva2.substr(0,posicionComa);
-                
-
-                nuevo_libro_import.authors=autor;
-                control2=control_error(nuevo_libro_import.authors);
-
-                if (control2==true){
-                  error(ERR_BOOK_AUTHORS);
-                }
-              if(control2==false){
-                /*año*/
-                  nueva3 = nueva2.erase(0,posicionComa+2);
-                  posicionComa=nueva3.find(comillas);
-                  year = nueva3.substr(0,posicionComa-1);
-                  
-                  
-                  if ((year.length()>0) && (year != " ")){
-                
-                    nuevo_libro_import.year = stoi(year);//convertir string a entero
-
-                  }
-                  if((nuevo_libro_import.year>=1440) && (nuevo_libro_import.year<=2022)){
-
-                
-                    control3=false;
-                
-
-                  }else{
-                    error(ERR_BOOK_DATE);
-                    control3=true;
-                
-                  }
-                   /*slug*/
-                    nueva4 = nueva3.erase(0,posicionComa+1);
-                    
-                    posicionComa=nueva4.find(comillas);
-                    slug = nueva4.substr(0,posicionComa);
-                    nuevo_libro_import.slug=slug;
-
-                if(control3==false){
-                /*price*/
-                  precio = nueva4.erase(0,posicionComa+2);
-                  
-                  
-
-                  if (precio.length()>0){
-                    nuevo_libro_import.price= stof(precio);
-              
-                  }
-                  if(nuevo_libro_import.price>=0){
-                    
-                    control4=false;
-                  }
-                  else{
-                    error(ERR_BOOK_PRICE);
-                    control4=true;
-                  }
-
-                  nuevo_libro_import.id=bookStore.nextId;
-                  bookStore.nextId++;
-                  bookStore.books.push_back(nuevo_libro_import);
-                  
-                }
-              }
-              
-          }
-
+          createBookImport(bookStore,libro_importado);
 
       }
       
@@ -408,7 +327,82 @@ void importFromCsv(BookStore &bookStore){
     error(ERR_FILE);
   }
 }
+void createBookImport(BookStore &bookStore, string libro_importado){
+  Book nuevo_libro_import;
 
+  string nueva2,nueva3,nueva4;
+  string nombre, autor,year,slug,precio;
+  bool control1,control2,control3,control4;
+  int posicionComa;
+
+  /*Extrael titulo*/
+  libro_importado.erase(0,1);
+  posicionComa=libro_importado.find(comillas);
+  nombre = libro_importado.substr(0,posicionComa);
+  nuevo_libro_import.title=nombre;
+
+  control1=control_error(nuevo_libro_import.title);
+  if (control1==true){
+    error(ERR_BOOK_TITLE);
+  }
+
+  if (control1==false){
+    /*autor*/
+    nueva2 = libro_importado.erase(0,posicionComa+3);
+    posicionComa=nueva2.find(comillas);
+    autor = nueva2.substr(0,posicionComa);            
+    nuevo_libro_import.authors=autor;
+
+    control2=control_error(nuevo_libro_import.authors);
+    if (control2==true){
+      error(ERR_BOOK_AUTHORS);
+    }
+    if(control2==false){
+      /*año*/
+      nueva3 = nueva2.erase(0,posicionComa+2);
+      posicionComa=nueva3.find(comillas);
+      year = nueva3.substr(0,posicionComa-1);         
+                    
+      if ((year.length()>0) && (year != " ")){           
+        nuevo_libro_import.year = stoi(year);//convertir string a entero
+
+      }
+      if((nuevo_libro_import.year>=1440) && (nuevo_libro_import.year<=2022)){
+      control3=false;
+      }else{
+      error(ERR_BOOK_DATE);
+      control3=true;
+                  
+      }
+      /*slug*/
+      nueva4 = nueva3.erase(0,posicionComa+1);
+      posicionComa=nueva4.find(comillas);
+      slug = nueva4.substr(0,posicionComa);
+      nuevo_libro_import.slug=slug;
+
+      if(control3==false){
+       /*price*/
+       precio = nueva4.erase(0,posicionComa+2);             
+       if (precio.length()>0){
+          nuevo_libro_import.price= stof(precio);      
+        }
+        if(nuevo_libro_import.price>=0){ 
+          control4=false;
+        }
+        else{
+          error(ERR_BOOK_PRICE);
+          control4=true;
+        }
+
+        nuevo_libro_import.id=bookStore.nextId;
+        bookStore.nextId++;
+        bookStore.books.push_back(nuevo_libro_import);
+                    
+      }
+    }
+                
+  }
+}
 void exportToCsv(const BookStore &bookStore){
   ofstream ficheroEsc;
   string file_name;
@@ -453,11 +447,14 @@ void loadData(BookStore &bookStore){
       cout << NAMEFILE;
       cin >> fileName;
       cin.get();
-      ficheroBinLec.open(fileName,ios::in | ios::binary)
-      if (ficheroBinLec,is_open()){
-        BinBook binLibroImport
-        bookStore.name;
-        bookStore.nextId;
+
+      ficheroBinLec.open(fileName,ios::in | ios::binary);
+      if (ficheroBinLec.is_open()){
+        BinBookStore binBookstoreLoad
+        BinBook binLibroImport;
+        bookStore.name=binBookstoreLoad.name;
+        bookStore.nextId=binBookstoreLoad.nextId;
+
         ficheroBinLec.seekg(3*sizeof(bookStore), ios::beg);
         while(ficheroBinLec.read((char *)&bookStore, sizeof(bookStore))){
           binLibroImport.title;
@@ -490,13 +487,20 @@ void saveData(const BookStore &bookStore ){
   ficherBinGuardar.open(fileName,ios::out | ios::binary);
 
   if (ficherBinGuardar.is_open()){
-    if (ficheroBinLec,is_open()){
-      
+    
+    BinBookStore binbookstoreSave;
 
-      ficherBinGuardar.close();
-    }else{
-      error(ERR_FILE);
-    }
+    binbookstoreSave.numbooks=bookStore.book.size();
+    ficherBinGuardar.write((const char *)&bookStore, sizeof(BinBookStore));
+
+
+
+
+
+
+
+    ficherBinGuardar.close();
+    
 
     
 
@@ -535,6 +539,12 @@ void importExportMenu(BookStore &bookStore) {
   } while (option != 'b');
 
 }
+void argumentprocessor(BookStore &bookStore, int argc, char *argv[], int errorArgument){
+
+}
+
+
+
 
 int main(int argc, char *argv[]) {
   BookStore bookStore;
@@ -543,33 +553,42 @@ int main(int argc, char *argv[]) {
   bookStore.nextId = 1;
 
   char option;
-  do {
-    showMainMenu();
-    cin >> option;
-    cin.get();
+  int errorArgument =0;
+  if (argc>1){
+    //llamar funcion argumentos
+    argumentprocessor(bookStore, argc, argv, errorArgument)
 
-    switch (option) {
-      case '1':
-        showCatalog(bookStore);
-        break;
-      case '2':
-        showExtendedCatalog(bookStore);
-        break;
-      case '3':
-        addBook(bookStore);
-        break;
-      case '4':
-        deleteBook(bookStore);
-        break;
-      case '5':
-        importExportMenu(bookStore);
-        break;
-      case 'q':
-        break;
-      default:
-        error(ERR_OPTION);
-    }
-  } while (option != 'q');
+  }
+  if ((argc==1) || (errorArgument==0){
+    do {
+      showMainMenu();
+      cin >> option;
+      cin.get();
+
+      switch (option) {
+        case '1':
+          showCatalog(bookStore);
+          break;
+        case '2':
+          showExtendedCatalog(bookStore);
+          break;
+        case '3':
+          addBook(bookStore);
+          break;
+        case '4':
+          deleteBook(bookStore);
+          break;
+        case '5':
+          importExportMenu(bookStore);
+          break;
+        case 'q':
+          break;
+        default:
+          error(ERR_OPTION);
+      }
+    }while (option != 'q');
+  }
+  
 
   return 0;
 }
