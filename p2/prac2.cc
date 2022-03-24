@@ -10,7 +10,7 @@ using namespace std;
 
 const int KMAXSTRING = 50;
 const char comillas = '"';
-const string NAMEFILE = "Enter filename:";
+const string NAMEFILE = "Enter filename: ";
 
 enum Error {
   ERR_OPTION,
@@ -117,7 +117,7 @@ void showExtendedCatalog(const BookStore &bookStore) {
          <<bookStore.books[a].price<<endl;
   }
 }
-bool control_error(string nombre){
+bool addControlError(string nombre){
   bool control=false;
   int longitud=0;
   longitud=nombre.length();
@@ -135,7 +135,7 @@ bool control_error(string nombre){
   return control;
 }
 
-string create_slug(string nombre){
+string slugGenerador(string nombre){
   string nombre_limpio;
   int recorrido=0;
   
@@ -172,36 +172,36 @@ string create_slug(string nombre){
 
 void addBook(BookStore &bookStore) {
   Book nuevo_libro;
-  bool control1,control2,control3,control4;
+  bool errorTitle,errorAutor,control3,control4;
   
   /*nombre*/
   do{
     cout << "Enter book title: ";
     getline(cin,nuevo_libro.title);
-    control1=control_error(nuevo_libro.title);
-    if (control1==true){
+    errorTitle=addControlError(nuevo_libro.title);
+    if (errorTitle==true){
       error(ERR_BOOK_TITLE);
     }
        
     
-  }while(control1!=false);
+  }while(errorTitle!=false);
 
   /*autor*/
   do{
-    cout << "Enter author(s):";
+    cout << "Enter author(s): ";
     getline(cin,nuevo_libro.authors);
-    control2=control_error(nuevo_libro.authors);
-    if (control2==true){
+    errorAutor=addControlError(nuevo_libro.authors);
+    if (errorAutor==true){
       error(ERR_BOOK_AUTHORS);
     }
     
-  }while(control2!=false);
+  }while(errorAutor!=false);
 
   /*año*/
   do{
     string year;
     int longitud=0;
-    cout <<"Enter publication year:";
+    cout <<"Enter publication year: ";
     getline(cin,year);
     longitud=year.length();
     if (longitud>0){
@@ -215,7 +215,8 @@ void addBook(BookStore &bookStore) {
       control3=false;
       
 
-    }else{
+    }
+    else{
       error(ERR_BOOK_DATE);
       control3=true;
       
@@ -230,7 +231,7 @@ void addBook(BookStore &bookStore) {
   do{
     string precio;
     int longitud=0;
-    cout <<"Enter price:";
+    cout <<"Enter price: ";
     getline(cin,precio);
     longitud=precio.length();
     
@@ -254,7 +255,7 @@ void addBook(BookStore &bookStore) {
     
   }while(control4!=false);
 
-  nuevo_libro.slug=create_slug(nuevo_libro.title);
+  nuevo_libro.slug=slugGenerador(nuevo_libro.title);
   nuevo_libro.id=bookStore.nextId;
   bookStore.nextId++;
   bookStore.books.push_back(nuevo_libro);
@@ -332,7 +333,7 @@ void createBookImport(BookStore &bookStore, string libro_importado){
 
   string nueva2,nueva3,nueva4;
   string nombre, autor,year,slug,precio;
-  bool control1,control2,control3,control4;
+  bool errorTitle,errorAutor,control3;
   int posicionComa;
 
   /*Extrael titulo*/
@@ -341,24 +342,24 @@ void createBookImport(BookStore &bookStore, string libro_importado){
   nombre = libro_importado.substr(0,posicionComa);
   nuevo_libro_import.title=nombre;
 
-  control1=control_error(nuevo_libro_import.title);
-  if (control1==true){
+  errorTitle=addControlError(nuevo_libro_import.title);
+  if (errorTitle==true){
     error(ERR_BOOK_TITLE);
   }
 
-  if (control1==false){
-    /*autor*/
+  if (errorTitle==false){
+  /*autor*/
     nueva2 = libro_importado.erase(0,posicionComa+3);
     posicionComa=nueva2.find(comillas);
     autor = nueva2.substr(0,posicionComa);            
     nuevo_libro_import.authors=autor;
 
-    control2=control_error(nuevo_libro_import.authors);
-    if (control2==true){
+    errorAutor=addControlError(nuevo_libro_import.authors);
+    if (errorAutor==true){
       error(ERR_BOOK_AUTHORS);
     }
-    if(control2==false){
-      /*año*/
+    if(errorAutor==false){
+  /*año*/
       nueva3 = nueva2.erase(0,posicionComa+2);
       posicionComa=nueva3.find(comillas);
       year = nueva3.substr(0,posicionComa-1);         
@@ -374,24 +375,24 @@ void createBookImport(BookStore &bookStore, string libro_importado){
       control3=true;
                   
       }
-      /*slug*/
+  /*slug*/
       nueva4 = nueva3.erase(0,posicionComa+1);
       posicionComa=nueva4.find(comillas);
       slug = nueva4.substr(0,posicionComa);
       nuevo_libro_import.slug=slug;
 
       if(control3==false){
-       /*price*/
+  /*price*/
        precio = nueva4.erase(0,posicionComa+2);             
        if (precio.length()>0){
           nuevo_libro_import.price= stof(precio);      
         }
         if(nuevo_libro_import.price>=0){ 
-          control4=false;
+          control3=false;
         }
         else{
           error(ERR_BOOK_PRICE);
-          control4=true;
+          control3=true;
         }
 
         nuevo_libro_import.id=bookStore.nextId;
@@ -450,14 +451,14 @@ void loadData(BookStore &bookStore){
 
       ficheroBinLec.open(fileName,ios::in | ios::binary);
       if (ficheroBinLec.is_open()){
-        BinBookStore binBookstoreLoad
-        BinBook binLibroImport;
+        BinBookStore binBookstoreLoad;
+        BinBook binbookLoad;
         bookStore.name=binBookstoreLoad.name;
         bookStore.nextId=binBookstoreLoad.nextId;
 
         ficheroBinLec.seekg(3*sizeof(bookStore), ios::beg);
         while(ficheroBinLec.read((char *)&bookStore, sizeof(bookStore))){
-          binLibroImport.title;
+          binbookLoad.title;
         }
 
         ficheroBinLec.close();
@@ -489,15 +490,17 @@ void saveData(const BookStore &bookStore ){
   if (ficherBinGuardar.is_open()){
     
     BinBookStore binbookstoreSave;
+    Book bookSave;
 
-    binbookstoreSave.numbooks=bookStore.book.size();
+    //binbookstoreSave.numbooks=bookStore.books.size();
     ficherBinGuardar.write((const char *)&bookStore, sizeof(BinBookStore));
+    for (int i=0;i<bookStore.books.size();i++){
 
+      ficherBinGuardar.write((const char *)&bookStore, sizeof(BookStore));
+     // ficherBinGuardar.write((int )&bookStore, sizeof(BookStore));
+      //ficherBinGuardar.write((float )&bookStore, sizeof(BookStore));
 
-
-
-
-
+    }
 
     ficherBinGuardar.close();
     
@@ -541,6 +544,8 @@ void importExportMenu(BookStore &bookStore) {
 }
 void argumentprocessor(BookStore &bookStore, int argc, char *argv[], int errorArgument){
 
+  int import=0, load=0;
+
 }
 
 
@@ -556,10 +561,10 @@ int main(int argc, char *argv[]) {
   int errorArgument =0;
   if (argc>1){
     //llamar funcion argumentos
-    argumentprocessor(bookStore, argc, argv, errorArgument)
+    argumentprocessor(bookStore, argc, argv, errorArgument);
 
   }
-  if ((argc==1) || (errorArgument==0){
+  if ((argc==1) || (errorArgument==0)){
     do {
       showMainMenu();
       cin >> option;
