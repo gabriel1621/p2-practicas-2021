@@ -264,9 +264,11 @@ void addBook(BookStore &bookStore) {
 
 void deleteBook(BookStore &bookStore) {
   string id_borrar;
-  unsigned int identificador=0,fail;
+  unsigned int identificador=0;
+  int fail=0;
   cout << "Enter book id: ";
   getline(cin,id_borrar);
+  
   if (id_borrar.size()<=0){
     error(ERR_ID);
   }
@@ -300,15 +302,22 @@ void showImporExportMenu(){
        <<"Option: ";
 }
 void createBookImport(BookStore &bookStore, string libro_importado);
-void importFromCsv(BookStore &bookStore){
+void stringToChar(string name, char nameConvert[]);
+void importFromCsv(BookStore &bookStore, string argumentos){
   
   ifstream fichero;
-  string file_name;
-  
+  string fileName;
+  if (argumentos.length()>0){
+    fileName=argumentos;
 
-  cout << NAMEFILE;
-  getline(cin,file_name);
-  fichero.open(file_name); //abro el fichero
+  }
+  else{
+    cout << NAMEFILE;
+    getline(cin,fileName);
+  }
+
+  
+  fichero.open(fileName); //abro el fichero
 
   if(fichero.is_open()){ //compruebo si se puede abrir
     string libro_importado;
@@ -406,11 +415,11 @@ void createBookImport(BookStore &bookStore, string libro_importado){
 }
 void exportToCsv(const BookStore &bookStore){
   ofstream ficheroEsc;
-  string file_name;
+  string fileName;
 
   cout << NAMEFILE;
-  getline(cin,file_name);
-  ficheroEsc.open(file_name,ios::out); //abro y si existe lo machaca
+  getline(cin,fileName);
+  ficheroEsc.open(fileName,ios::out); //abro y si existe lo machaca
   if (ficheroEsc.is_open()){
     
     int canti_libros=(int)bookStore.books.size();
@@ -431,11 +440,12 @@ void exportToCsv(const BookStore &bookStore){
   }
 }
 
-void loadData(BookStore &bookStore){
+
+void loadData(BookStore &bookStore, string argumentos){
   ifstream ficheroBinLec;
   string preguntaSeguridad;
   bool comprobar;
-  char fileName[900];
+  string fileName;
 
   
   do{
@@ -445,22 +455,41 @@ void loadData(BookStore &bookStore){
 
     if ((preguntaSeguridad == "Y")||(preguntaSeguridad == "y")){
       comprobar = false;
-      cout << NAMEFILE;
-      cin >> fileName;
-      cin.get();
+      if (argumentos.length()>0){
+        fileName=argumentos;
+
+      }
+      else{
+        cout << NAMEFILE;
+        getline(cin,fileName);
+      }
+      
 
       ficheroBinLec.open(fileName,ios::in | ios::binary);
       if (ficheroBinLec.is_open()){
         BinBookStore binBookstoreLoad;
         BinBook binbookLoad;
-        bookStore.name=binBookstoreLoad.name;
-        bookStore.nextId=binBookstoreLoad.nextId;
+        Book bookload;
+        
+        bookStore.books.clear();
 
-        ficheroBinLec.seekg(3*sizeof(bookStore), ios::beg);
-        while(ficheroBinLec.read((char *)&bookStore, sizeof(bookStore))){
-          binbookLoad.title;
-        }
+          ficheroBinLec.read((char *)&binBookstoreLoad, sizeof(BinBookStore));
+          bookStore.name=binBookstoreLoad.name;
+          bookStore.nextId=(binBookstoreLoad.nextId);
+        
 
+        while(ficheroBinLec.read((char *)&binbookLoad, sizeof(BinBook))){
+          
+          bookload.id=binbookLoad.id; //id
+          bookload.title=binbookLoad.title; //titulo
+          bookload.authors=binbookLoad.authors; //autor
+          bookload.year=binbookLoad.year; //año
+          bookload.slug=binbookLoad.slug; //slug
+          bookload.price=binbookLoad.price; //precio
+
+          bookStore.books.push_back(bookload);
+        } 
+        
         ficheroBinLec.close();
 
       }else{
@@ -528,6 +557,7 @@ void saveData(const BookStore &bookStore ){
 
 void importExportMenu(BookStore &bookStore) {
   char option;
+  string argumentos="";
   do {
     showImporExportMenu();
     cin >> option;
@@ -535,13 +565,13 @@ void importExportMenu(BookStore &bookStore) {
 
     switch (option) {
       case '1':
-        importFromCsv(bookStore);
+        importFromCsv(bookStore,argumentos);
         break;
       case '2':
         exportToCsv(bookStore);
         break;
       case '3':
-        loadData(bookStore);
+        loadData(bookStore,argumentos);
         break;
       case '4':
         saveData(bookStore);
@@ -554,9 +584,99 @@ void importExportMenu(BookStore &bookStore) {
   } while (option != 'b');
 
 }
-void argumentprocessor(BookStore &bookStore, int argc, char *argv[], int errorArgument){
 
-  int import=0, load=0;
+void ErrorandSelectArgument(vector<string> argumentos, int argc  , bool error2, int binary ,int text){
+ /*Control de errores*/
+  error2 = false;
+  if ((argc==3) || (argc==5)){
+    if ((argumentos[0]=="-l") || (argumentos[0]=="-i")){
+      if (argc==5){
+        if ((argumentos[2]=="-l")||(argumentos[2]=="-i")){
+          if (argumentos[0]==argumentos[2]){
+            error2 = true;
+          }
+
+        }
+        else{
+          error2 = true;
+        }
+
+      }
+      else{
+        error2 = true;
+      }
+    }
+    else{
+      error2 = true;
+    }
+
+  }
+  else{
+    error2 = true;
+  }
+ /*Selecionar argumento*/
+  binary=0;
+  text=0;
+  if (error2 == false){
+      if(argc==3){
+        if (argumentos[0]=="-l"){
+          binary ++;
+        }
+        if (argumentos[0]=="-i"){
+          text ++;
+        }
+      }
+      if (argc==5){
+        if ((argumentos[0]=="-l") && (argumentos[2]=="-i")){
+          binary = 2;
+          text=1;
+        }
+        if ((argumentos[0]=="-i") && (argumentos[2]=="-l")){
+          binary = 3;
+          text=1;
+        }
+      }
+
+  }
+  
+}
+void argumentprocessor(BookStore &bookStore, int argc, char *argv[]){
+  vector<string> argumentos;
+  int binary=0;
+  int text=0;
+  bool error2 = false;
+  
+  
+  for (int unsigned i=0;i<sizeof(argumentos);i++){
+    argumentos.push_back(argv[i]);
+
+  }
+    
+  ErrorandSelectArgument(argumentos, argc, error2, binary, text);
+
+  if (error2==false){
+
+    if (binary<=3){
+      switch (binary){
+        case 1: loadData(bookStore,argumentos[1]);
+                break;
+        case 2: loadData(bookStore,argumentos[1]);
+                importFromCsv(bookStore,argumentos[3]);
+                break;
+        case 3: loadData(bookStore,argumentos[3]);
+                importFromCsv(bookStore,argumentos[1]);
+                break;
+      }
+    }
+    else{
+      importFromCsv(bookStore,argumentos[1]);
+    }
+
+  }
+  else{
+    error(ERR_ARGS);
+  }
+
 
 }
 
@@ -573,7 +693,7 @@ int main(int argc, char *argv[]) {
   int errorArgument =0;
   if (argc>1){
     //llamar funcion argumentos
-    argumentprocessor(bookStore, argc, argv, errorArgument);
+    argumentprocessor(bookStore, argc, argv);
 
   }
   if ((argc==1) || (errorArgument==0)){
