@@ -477,6 +477,11 @@ void loadData(BookStore &bookStore){
   }while( comprobar == true);
   
 }
+void stringToChar(string name, char nameConvert[]){
+
+  strncpy(nameConvert, name.c_str(), KMAXSTRING-1);
+  nameConvert[KMAXSTRING-1]='\0';
+}
 
 void saveData(const BookStore &bookStore ){
   char fileName[9000];
@@ -490,15 +495,22 @@ void saveData(const BookStore &bookStore ){
   if (ficherBinGuardar.is_open()){
     
     BinBookStore binbookstoreSave;
-    Book bookSave;
+    binbookstoreSave.nextId=bookStore.nextId;
+    stringToChar(bookStore.name,binbookstoreSave.name);
+    
+    ficherBinGuardar.write((const char *)&binbookstoreSave, sizeof(BinBookStore));
+    
+    for (int unsigned i=0;i<bookStore.books.size();i++){
+      BinBook binbookSave;
+      binbookSave.id=bookStore.books[i].id;
+      stringToChar(bookStore.books[i].title,binbookSave.title);
+      stringToChar(bookStore.books[i].authors,binbookSave.authors);
+      binbookSave.year=bookStore.books[i].year;
+      stringToChar(bookStore.books[i].slug,binbookSave.slug);
+      binbookSave.price=bookStore.books[i].price;
 
-    //binbookstoreSave.numbooks=bookStore.books.size();
-    ficherBinGuardar.write((const char *)&bookStore, sizeof(BinBookStore));
-    for (int i=0;i<bookStore.books.size();i++){
-
-      ficherBinGuardar.write((const char *)&bookStore, sizeof(BookStore));
-     // ficherBinGuardar.write((int )&bookStore, sizeof(BookStore));
-      //ficherBinGuardar.write((float )&bookStore, sizeof(BookStore));
+      ficherBinGuardar.write((const char *)&binbookSave, sizeof(BinBook));
+     
 
     }
 
