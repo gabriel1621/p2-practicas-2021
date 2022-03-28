@@ -441,11 +441,12 @@ void exportToCsv(const BookStore &bookStore){
 }
 
 
-void loadData(BookStore &bookStore, string argumentos){
+void loadData(BookStore &bookStore, string argumentos, int &badfile){
   ifstream ficheroBinLec;
   string preguntaSeguridad;
   bool comprobar;
   string fileName;
+  
 
   
   do{
@@ -494,6 +495,9 @@ void loadData(BookStore &bookStore, string argumentos){
 
       }else{
         error(ERR_FILE);
+        if (argumentos.length()>0){
+          badfile=1;
+        }
       }
 
     }
@@ -555,9 +559,10 @@ void saveData(const BookStore &bookStore ){
 
 }
 
-void importExportMenu(BookStore &bookStore) {
+void importExportMenu(BookStore &bookStore, int &badfile) {
   char option;
   string argumentos="";
+  
   do {
     showImporExportMenu();
     cin >> option;
@@ -571,7 +576,7 @@ void importExportMenu(BookStore &bookStore) {
         exportToCsv(bookStore);
         break;
       case '3':
-        loadData(bookStore,argumentos);
+        loadData(bookStore,argumentos,badfile);
         break;
       case '4':
         saveData(bookStore);
@@ -585,97 +590,106 @@ void importExportMenu(BookStore &bookStore) {
 
 }
 
-void ErrorandSelectArgument(vector<string> argumentos, int argc  , bool error2, int binary ,int text){
+void ErrorandSelectArgument(vector<string> argumentos, int argc, int &errorArgument, int &binary, int &text){
  /*Control de errores*/
-  error2 = false;
+  
   if ((argc==3) || (argc==5)){
-    if ((argumentos[0]=="-l") || (argumentos[0]=="-i")){
+    if ((argumentos[1]=="-l") || (argumentos[1]=="-i")){
       if (argc==5){
-        if ((argumentos[2]=="-l")||(argumentos[2]=="-i")){
-          if (argumentos[0]==argumentos[2]){
-            error2 = true;
+        if ((argumentos[3]=="-l")||(argumentos[3]=="-i")){
+          if (argumentos[1]==argumentos[3]){
+            errorArgument = 1;
           }
 
         }
         else{
-          error2 = true;
+          errorArgument = 1;
         }
 
       }
-      else{
-        error2 = true;
-      }
+      
     }
     else{
-      error2 = true;
+      errorArgument = 1;
     }
 
   }
   else{
-    error2 = true;
+    errorArgument = 1;
   }
- /*Selecionar argumento*/
-  binary=0;
-  text=0;
-  if (error2 == false){
+  /*Selecionar argumento*/
+    if (errorArgument == 0){
       if(argc==3){
-        if (argumentos[0]=="-l"){
-          binary ++;
+        if (argumentos[1]=="-l"){
+          binary = 1;
+          
         }
-        if (argumentos[0]=="-i"){
-          text ++;
+        if (argumentos[1]=="-i"){
+          text = 1;
         }
       }
       if (argc==5){
-        if ((argumentos[0]=="-l") && (argumentos[2]=="-i")){
+        if ((argumentos[1]=="-l") && (argumentos[3]=="-i")){
           binary = 2;
           text=1;
         }
-        if ((argumentos[0]=="-i") && (argumentos[2]=="-l")){
+        if ((argumentos[1]=="-i") && (argumentos[3]=="-l")){
           binary = 3;
           text=1;
         }
       }
 
   }
+
+  
   
 }
-void argumentprocessor(BookStore &bookStore, int argc, char *argv[]){
+void argumentprocessor(BookStore &bookStore, int argc, char *argv[], int &errorArgument, int &badfile){
   vector<string> argumentos;
   int binary=0;
   int text=0;
-  bool error2 = false;
   
   
-  for (int unsigned i=0;i<sizeof(argumentos);i++){
+  
+  
+  for (int i=0;i<argc;i++){
     argumentos.push_back(argv[i]);
+    
 
   }
     
-  ErrorandSelectArgument(argumentos, argc, error2, binary, text);
-
-  if (error2==false){
-
-    if (binary<=3){
+  ErrorandSelectArgument(argumentos, argc, errorArgument, binary, text);
+  
+  if (errorArgument==1){
+    error(ERR_ARGS);
+    
+  }
+  
+ 
+  
+  
+ /*orden de ejecucion*/
+  if (errorArgument == 0){
+    
+    if ((binary>0)&&(binary<=3)){
       switch (binary){
-        case 1: loadData(bookStore,argumentos[1]);
+        case 1: loadData(bookStore,argumentos[2],badfile);
                 break;
-        case 2: loadData(bookStore,argumentos[1]);
-                importFromCsv(bookStore,argumentos[3]);
+        case 2: loadData(bookStore,argumentos[2],badfile);
+                importFromCsv(bookStore,argumentos[4]);
                 break;
-        case 3: loadData(bookStore,argumentos[3]);
-                importFromCsv(bookStore,argumentos[1]);
+        case 3: loadData(bookStore,argumentos[4],badfile);
+                importFromCsv(bookStore,argumentos[2]);
                 break;
       }
     }
-    else{
-      importFromCsv(bookStore,argumentos[1]);
+    else if(text ==1){
+      
+      importFromCsv(bookStore,argumentos[2]);
     }
 
   }
-  else{
-    error(ERR_ARGS);
-  }
+  
 
 
 }
@@ -688,15 +702,16 @@ int main(int argc, char *argv[]) {
   
   bookStore.name = "My Book Store";
   bookStore.nextId = 1;
-
+  int errorArgument = 0, badfile=0;
   char option;
-  int errorArgument =0;
+  
   if (argc>1){
     //llamar funcion argumentos
-    argumentprocessor(bookStore, argc, argv);
+    argumentprocessor(bookStore, argc, argv,errorArgument, badfile);
+    
 
   }
-  if ((argc==1) || (errorArgument==0)){
+  if ((argc==1) || ((errorArgument==0) && (badfile==0))){
     do {
       showMainMenu();
       cin >> option;
@@ -716,7 +731,7 @@ int main(int argc, char *argv[]) {
           deleteBook(bookStore);
           break;
         case '5':
-          importExportMenu(bookStore);
+          importExportMenu(bookStore, badfile);
           break;
         case 'q':
           break;
