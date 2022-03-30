@@ -9,7 +9,8 @@
 using namespace std;
 
 const int KMAXSTRING = 50;
-const char comillas = '"';
+const char COMILLAS = '"';
+const char GUION = '-';
 const string NAMEFILE = "Enter filename: ";
 
 enum Error {
@@ -51,7 +52,27 @@ struct BinBookStore {
   char name[KMAXSTRING];
   unsigned int nextId;
 };
-
+/**Inicializo todas las funciones*/
+void error(Error e);
+void showMainMenu();
+void showCatalog(const BookStore &bookStore);
+void showExtendedCatalog(const BookStore &bookStore);
+bool addControlError(string nombre);
+string slugGenerador(string nombre);
+void addBook(BookStore &bookStore);
+void deleteBook(BookStore &bookStore);
+void showImporExportMenu();
+void createBookImport(BookStore &bookStore, string libro_importado);
+void stringToChar(string name, char nameConvert[]);
+void importFromCsv(BookStore &bookStore, string argumentos, int &badfile);
+void exportToCsv(const BookStore &bookStore);
+void loadDataProcess(BookStore &bookStore, string argumentos,string fileName, int &badfile);
+void loadData(BookStore &bookStore, string argumentos, int &badfile);
+void saveData(const BookStore &bookStore );
+void importExportMenu(BookStore &bookStore, int &badfile) ;
+void ErrorandSelectArgument(vector<string> argumentos, int argc, int &errorArgument, int &binary, int &text);
+void argumentprocessor(BookStore &bookStore, int argc, char *argv[], int &errorArgument, int &badfile);
+/*********************************/
 void error(Error e) {
   switch (e) {
     case ERR_OPTION:
@@ -106,13 +127,13 @@ void showExtendedCatalog(const BookStore &bookStore) {
   int canti_libros=(int)bookStore.books.size();
   
   for (int a=0;a<canti_libros;a++){
-    cout << comillas << bookStore.books[a].title << comillas
+    cout << COMILLAS << bookStore.books[a].title << COMILLAS
          <<","
-         << comillas << bookStore.books[a].authors << comillas
+         << COMILLAS << bookStore.books[a].authors << COMILLAS
          <<","
          << bookStore.books[a].year
          <<","
-         << comillas << bookStore.books[a].slug << comillas
+         << COMILLAS << bookStore.books[a].slug << COMILLAS
          <<","
          <<bookStore.books[a].price<<endl;
   }
@@ -124,7 +145,7 @@ bool addControlError(string nombre){
   for (int i=0;i<longitud;i++){
       if((isalnum(nombre[i])==0) && (nombre[i]!=' ') 
           && (nombre[i]!=',') && (nombre[i]!=':') 
-          && (nombre[i]!='-')&& (nombre[i]!='\0')){
+          && (nombre[i]!=GUION)&& (nombre[i]!='\0')){
            control=true;
       }
     }
@@ -150,21 +171,29 @@ string slugGenerador(string nombre){
 
   for(int r=0;r<recorrido;r++){
     if(isalnum(nombre[r])==0){
-       nombre[r]='-';   
+       nombre[r]=GUION;   
     }                       //convertir caracters especiales  a "-"
   }
   int o=0;
   for(int t=0;t<recorrido;t++){
     o=t;
-    if(nombre[t]=='-'){
+    if(nombre[t]==GUION){
       o++;
-      if(nombre[o]=='-'){
+      if(nombre[o]==GUION){
         nombre.erase(t,1);
         t--;
       }
 
     }
     
+  }
+  if (nombre[0]==GUION){
+    nombre.erase(0,1);
+
+  }
+  recorrido=nombre.length()-1;
+  if (nombre[recorrido]==GUION){
+    nombre.erase(recorrido,1);
   }
   
   return nombre;
@@ -301,9 +330,8 @@ void showImporExportMenu(){
        <<"b- Back to main menu"<< endl
        <<"Option: ";
 }
-void createBookImport(BookStore &bookStore, string libro_importado);
-void stringToChar(string name, char nameConvert[]);
-void importFromCsv(BookStore &bookStore, string argumentos){
+
+void importFromCsv(BookStore &bookStore, string argumentos, int &badfile){
   
   ifstream fichero;
   string fileName;
@@ -335,6 +363,9 @@ void importFromCsv(BookStore &bookStore, string argumentos){
     fichero.close(); //cierro el fichero
   }else{
     error(ERR_FILE);
+    if (argumentos.length()>0){
+          badfile=1;
+        }
   }
 }
 void createBookImport(BookStore &bookStore, string libro_importado){
@@ -347,7 +378,7 @@ void createBookImport(BookStore &bookStore, string libro_importado){
 
   /*Extrael titulo*/
   libro_importado.erase(0,1);
-  posicionComa=libro_importado.find(comillas);
+  posicionComa=libro_importado.find(COMILLAS);
   nombre = libro_importado.substr(0,posicionComa);
   nuevo_libro_import.title=nombre;
 
@@ -359,7 +390,7 @@ void createBookImport(BookStore &bookStore, string libro_importado){
   if (errorTitle==false){
   /*autor*/
     nueva2 = libro_importado.erase(0,posicionComa+3);
-    posicionComa=nueva2.find(comillas);
+    posicionComa=nueva2.find(COMILLAS);
     autor = nueva2.substr(0,posicionComa);            
     nuevo_libro_import.authors=autor;
 
@@ -370,7 +401,7 @@ void createBookImport(BookStore &bookStore, string libro_importado){
     if(errorAutor==false){
   /*año*/
       nueva3 = nueva2.erase(0,posicionComa+2);
-      posicionComa=nueva3.find(comillas);
+      posicionComa=nueva3.find(COMILLAS);
       year = nueva3.substr(0,posicionComa-1);         
                     
       if ((year.length()>0) && (year != " ")){           
@@ -386,7 +417,7 @@ void createBookImport(BookStore &bookStore, string libro_importado){
       }
   /*slug*/
       nueva4 = nueva3.erase(0,posicionComa+1);
-      posicionComa=nueva4.find(comillas);
+      posicionComa=nueva4.find(COMILLAS);
       slug = nueva4.substr(0,posicionComa);
       nuevo_libro_import.slug=slug;
 
@@ -426,10 +457,10 @@ void exportToCsv(const BookStore &bookStore){
     
     
     for (int a=0;a<canti_libros;a++){
-        ficheroEsc <<  comillas << bookStore.books[a].title << comillas << ","
-         << comillas << bookStore.books[a].authors << comillas << ","
+        ficheroEsc <<  COMILLAS << bookStore.books[a].title << COMILLAS << ","
+         << COMILLAS << bookStore.books[a].authors << COMILLAS << ","
          << bookStore.books[a].year << ","
-         << comillas << bookStore.books[a].slug << comillas << ","
+         << COMILLAS << bookStore.books[a].slug << COMILLAS << ","
          << bookStore.books[a].price;
     }
 
@@ -439,35 +470,10 @@ void exportToCsv(const BookStore &bookStore){
     error(ERR_FILE);
   }
 }
-
-
-void loadData(BookStore &bookStore, string argumentos, int &badfile){
+void loadDataProcess(BookStore &bookStore, string argumentos,string fileName, int &badfile){
   ifstream ficheroBinLec;
-  string preguntaSeguridad;
-  bool comprobar;
-  string fileName;
-  
-
-  
-  do{
-    cout << "All data will be erased, do you want to continue (Y/N)?: ";
-    getline(cin,preguntaSeguridad);
-    comprobar = true;
-
-    if ((preguntaSeguridad == "Y")||(preguntaSeguridad == "y")){
-      comprobar = false;
-      if (argumentos.length()>0){
-        fileName=argumentos;
-
-      }
-      else{
-        cout << NAMEFILE;
-        getline(cin,fileName);
-      }
-      
-
-      ficheroBinLec.open(fileName,ios::in | ios::binary);
-      if (ficheroBinLec.is_open()){
+  ficheroBinLec.open(fileName,ios::in | ios::binary);
+  if (ficheroBinLec.is_open()){
         BinBookStore binBookstoreLoad;
         BinBook binbookLoad;
         Book bookload;
@@ -492,13 +498,40 @@ void loadData(BookStore &bookStore, string argumentos, int &badfile){
         } 
         
         ficheroBinLec.close();
-
-      }else{
-        error(ERR_FILE);
-        if (argumentos.length()>0){
-          badfile=1;
-        }
+  }
+  else{
+    error(ERR_FILE);
+      if (argumentos.length()>0){
+         badfile=1;
       }
+  }
+}
+
+void loadData(BookStore &bookStore, string argumentos, int &badfile){
+  string preguntaSeguridad;
+  bool comprobar;
+  string fileName;
+  
+
+  if (argumentos.length()>0){
+    fileName=argumentos;
+    loadDataProcess(bookStore,argumentos, fileName,badfile);
+  }
+  else{
+    do{
+    cout << "All data will be erased, do you want to continue (Y/N)?: ";
+    getline(cin,preguntaSeguridad);
+    comprobar = true;
+
+    if ((preguntaSeguridad == "Y")||(preguntaSeguridad == "y")){
+      comprobar = false;
+      
+      cout << NAMEFILE;
+      getline(cin,fileName);
+
+      loadDataProcess(bookStore,argumentos, fileName,badfile);
+
+      
 
     }
     if((preguntaSeguridad == "N")||(preguntaSeguridad == "n")){
@@ -508,6 +541,9 @@ void loadData(BookStore &bookStore, string argumentos, int &badfile){
     
 
   }while( comprobar == true);
+    
+  }
+  
   
 }
 void stringToChar(string name, char nameConvert[]){
@@ -570,7 +606,7 @@ void importExportMenu(BookStore &bookStore, int &badfile) {
 
     switch (option) {
       case '1':
-        importFromCsv(bookStore,argumentos);
+        importFromCsv(bookStore,argumentos,badfile);
         break;
       case '2':
         exportToCsv(bookStore);
@@ -649,25 +685,21 @@ void argumentprocessor(BookStore &bookStore, int argc, char *argv[], int &errorA
   int binary=0;
   int text=0;
   
-  
-  
-  
   for (int i=0;i<argc;i++){
+
     argumentos.push_back(argv[i]);
     
-
   }
     
   ErrorandSelectArgument(argumentos, argc, errorArgument, binary, text);
   
   if (errorArgument==1){
+
     error(ERR_ARGS);
-    
+
   }
   
  
-  
-  
  /*orden de ejecucion*/
   if (errorArgument == 0){
     
@@ -676,27 +708,25 @@ void argumentprocessor(BookStore &bookStore, int argc, char *argv[], int &errorA
         case 1: loadData(bookStore,argumentos[2],badfile);
                 break;
         case 2: loadData(bookStore,argumentos[2],badfile);
-                importFromCsv(bookStore,argumentos[4]);
+                importFromCsv(bookStore,argumentos[4],badfile);
                 break;
         case 3: loadData(bookStore,argumentos[4],badfile);
-                importFromCsv(bookStore,argumentos[2]);
+                importFromCsv(bookStore,argumentos[2],badfile);
                 break;
       }
     }
     else if(text ==1){
       
-      importFromCsv(bookStore,argumentos[2]);
+      importFromCsv(bookStore,argumentos[2],badfile);
     }
 
   }
-  
-
 
 }
 
 
 
-
+/*Codigo main */
 int main(int argc, char *argv[]) {
   BookStore bookStore;
   
@@ -708,7 +738,6 @@ int main(int argc, char *argv[]) {
   if (argc>1){
     //llamar funcion argumentos
     argumentprocessor(bookStore, argc, argv,errorArgument, badfile);
-    
 
   }
   if ((argc==1) || ((errorArgument==0) && (badfile==0))){
