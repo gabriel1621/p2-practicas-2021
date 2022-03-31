@@ -89,7 +89,7 @@ void saveData(const BookStore &bookStore );
 void importExportMenu(BookStore &bookStore, int &badfile) ;
 /*funcion para el control de errores de argumentos
 y selesccion de la orden de ejecucion*/
-void ErrorandSelectArgument(vector<string> argumentos, int argc, int &errorArgument, int &binary, int &text);
+void ErrorandSelectArgument(vector<string> argumentos, int argc, int &errorArgument, int &argBinario, int &argTexto);
 /*funcion para procesar y ejecutar las funciones atraves de argumentos*/
 void argumentprocessor(BookStore &bookStore, int argc, char *argv[], int &errorArgument, int &badfile);
 /*********************************/
@@ -179,6 +179,51 @@ bool addControlError(string nombre){
       
       control=true;
     }
+  return control;
+}
+bool controlErrorNumberInt(string num){
+  bool control=false;
+  int longitud=0;
+  /*obtengo la longitud del string para comprobar
+  todas las posciones con el bucle*/
+  longitud=num.length();
+  
+  if (longitud>0){
+
+    for (int i=0;i<longitud;i++){
+      if(isdigit(num[i])==0){
+           control=true;
+      }
+    }
+      
+    
+  }
+  else{
+    control=true;
+  }
+  return control;
+}
+bool controlErrorNumberFloat(string num){
+  bool control=false;
+  int longitud=0;
+  /*obtengo la longitud del string para comprobar
+  todas las posciones con el bucle*/
+  longitud=num.length();
+  
+  if (longitud>0){
+
+    for (int i=0;i<longitud;i++){
+      //compre que sea numero y que no contenga . en la primera poscion
+      if((isdigit(num[i])==0)&&(num[0]=='.')){ 
+        control=true;
+      }
+    }
+      
+    
+  }
+  else{
+    control=true;
+  }
   return control;
 }
 
@@ -272,24 +317,32 @@ void addBook(BookStore &bookStore) {
   /*año*/
   do{
     string year;
-    int longitud=0;
+    
 
     cout <<"Enter publication year: ";
     getline(cin,year);
 
     //obtengo la longitud y compruebo que no este vacio
-    longitud=year.length(); 
-    if (longitud>0){
+    erroryear=controlErrorNumberInt(year);
+    if (erroryear==false){
       
       nuevo_libro.year = stoi(year);//convertir string a entero
 
-    }
-    //compruebo que esta en el rango de años
-    if((nuevo_libro.year>=1440) && (nuevo_libro.year<=2022)){
+      //compruebo que esta en el rango de años
+      if((nuevo_libro.year>=1440) && (nuevo_libro.year<=2022)){
 
-      erroryear=false;
+        erroryear=false;
       
+      }
+      else{
+
+        error(ERR_BOOK_DATE);
+        erroryear=true;
+      }
+
     }
+    
+
     else{
 
       error(ERR_BOOK_DATE);
@@ -301,23 +354,27 @@ void addBook(BookStore &bookStore) {
   /*precio*/
   do{
     string precio;
-    int longitud=0;
 
     cout <<"Enter price: ";
     getline(cin,precio);
 
-    longitud=precio.length();
+    errorPrecio=controlErrorNumberFloat(precio);
     
-
-    if (longitud>0){
-
+    
+    if (errorPrecio!=true){
+        
       nuevo_libro.price= stof(precio);//convertir string a float
+      if(nuevo_libro.price>=0){
+      
+        errorPrecio=false;
+      }
+      else{
+        error(ERR_BOOK_PRICE);
+        errorPrecio=true;
+      }
       
     }
-    if(nuevo_libro.price>=0){
-      
-      errorPrecio=false;
-    }
+
     else{
       error(ERR_BOOK_PRICE);
       errorPrecio=true;
@@ -435,7 +492,7 @@ void createBookImport(BookStore &bookStore, string libro_importado){
   string nueva2,nueva3,nueva4; 
   string nombre, autor,year,slug,precio;
 
-  bool errorTitle,errorAutor,control3;
+  bool errorTitle,errorAutor,erroryear,errorPrecio;
   int posicionComa;
 
   /*Para trocear el string usare las fuciones:
@@ -475,22 +532,28 @@ void createBookImport(BookStore &bookStore, string libro_importado){
       posicionComa=nueva3.find(COMILLAS);
       year = nueva3.substr(0,posicionComa-1);         
                     
-      if ((year.length()>0) && (year != " ")){  
+      erroryear=controlErrorNumberInt(year);
+      if (erroryear!=true){
+      
+        nuevo_libro_import.year = stoi(year);//convertir string a entero
 
-        nuevo_libro_import.year = stoi(year);
+        //compruebo que esta en el rango de años
+        if((nuevo_libro_import.year>=1440) && (nuevo_libro_import.year<=2022)){
 
-      }
-      if((nuevo_libro_import.year>=1440) && (nuevo_libro_import.year<=2022)){
+         erroryear=false;
+      
+        }
+        else{
 
-        control3=false;
-        
+          error(ERR_BOOK_DATE);
+          erroryear=true;
+        }
+
       }
       else{
-
         error(ERR_BOOK_DATE);
-        control3=true;
-                  
-      }
+        erroryear=true;
+       }
   /*slug*/
 
       nueva4 = nueva3.erase(0,posicionComa+1);
@@ -499,25 +562,36 @@ void createBookImport(BookStore &bookStore, string libro_importado){
       nuevo_libro_import.slug=slug;
 
   /*price*/
-      if(control3==false){
-
-       precio = nueva4.erase(0,posicionComa+2); 
-
-       if(precio.length()>0){
-          nuevo_libro_import.price= stof(precio);   
-
+      if(erroryear==false){
+      
+        precio = nueva4.erase(0,posicionComa+2); 
+        errorPrecio=controlErrorNumberFloat(precio);
+        
+        if (errorPrecio!=true){
+          
+          nuevo_libro_import.price= stof(precio);//convertir string a float
+          if(nuevo_libro_import.price>=0){
+        
+            errorPrecio=false;
+            nuevo_libro_import.id=bookStore.nextId;
+            bookStore.nextId++;
+            bookStore.books.push_back(nuevo_libro_import);
+          }
+          else{
+            error(ERR_BOOK_PRICE);
+            errorPrecio=true;
+          }
+        
         }
-        if(nuevo_libro_import.price>=0){
-          control3=false;
-        }
+
         else{
           error(ERR_BOOK_PRICE);
-          control3=true;
+          errorPrecio=true;
         }
 
-        nuevo_libro_import.id=bookStore.nextId;
-        bookStore.nextId++;
-        bookStore.books.push_back(nuevo_libro_import);
+       
+
+        
                     
       }
     }
@@ -730,12 +804,14 @@ void importExportMenu(BookStore &bookStore, int &badfile) {
 
 }
 
-void ErrorandSelectArgument(vector<string> argumentos, int argc, int &errorArgument, int &binary, int &text){
+void ErrorandSelectArgument(vector<string> argumentos, int argc, int &errorArgument, int &argBinario, int &argTexto){
  /*Control de errores*/
   
   if ((argc==3) || (argc==5)){ //compruebo conatidad de argumentos
-    if ((argumentos[1]=="-l") || (argumentos[1]=="-i")){
+    //compruebo si el primer argumero
+    if ((argumentos[1]=="-l") || (argumentos[1]=="-i")){ 
       if (argc==5){
+        //compruebo si el segundo argumero
         if ((argumentos[3]=="-l")||(argumentos[3]=="-i")){ 
           if (argumentos[1]==argumentos[3]){ //compruebo argumentos repetidos
             errorArgument = 1;
@@ -763,21 +839,21 @@ void ErrorandSelectArgument(vector<string> argumentos, int argc, int &errorArgum
     if (errorArgument == 0){
       if(argc==3){
         if (argumentos[1]=="-l"){
-          binary = 1;
+          argBinario = 1;
           
         }
         if (argumentos[1]=="-i"){
-          text = 1;
+          argTexto = 1;
         }
       }
       if (argc==5){
         if ((argumentos[1]=="-l") && (argumentos[3]=="-i")){
-          binary = 2;
-          text=1;
+          argBinario = 2;
+          argTexto=1;
         }
         if ((argumentos[1]=="-i") && (argumentos[3]=="-l")){
-          binary = 3;
-          text=1;
+          argBinario = 3;
+          argTexto=1;
         }
       }
 
@@ -787,17 +863,17 @@ void ErrorandSelectArgument(vector<string> argumentos, int argc, int &errorArgum
   
 }
 void argumentprocessor(BookStore &bookStore, int argc, char *argv[], int &errorArgument, int &badfile){
-  vector<string> argumentos;
-  int binary=0;
-  int text=0;
+  vector<string> argumentos; //creo un vector donde almacenar los argumentos
+  int argBinario=0;
+  int argTexto=0;
   
   for (int i=0;i<argc;i++){
 
     argumentos.push_back(argv[i]);
     
   }
-    
-  ErrorandSelectArgument(argumentos, argc, errorArgument, binary, text);
+  //llamo a la funcion donde se comprueban los errores y se marcar el orden de ejecucion
+  ErrorandSelectArgument(argumentos, argc, errorArgument, argBinario, argTexto);
   
   if (errorArgument==1){
 
@@ -809,8 +885,8 @@ void argumentprocessor(BookStore &bookStore, int argc, char *argv[], int &errorA
  /*orden de ejecucion*/
   if (errorArgument == 0){
     
-    if ((binary>0)&&(binary<=3)){
-      switch (binary){
+    if ((argBinario>0)&&(argBinario<=3)){
+      switch (argBinario){
         case 1: loadData(bookStore,argumentos[2],badfile);
                 break;
         case 2: loadData(bookStore,argumentos[2],badfile);
@@ -821,7 +897,7 @@ void argumentprocessor(BookStore &bookStore, int argc, char *argv[], int &errorA
                 break;
       }
     }
-    else if(text ==1){
+    else if(argTexto ==1){
       
       importFromCsv(bookStore,argumentos[2],badfile);
     }
@@ -838,7 +914,8 @@ int main(int argc, char *argv[]) {
   
   bookStore.name = "My Book Store";
   bookStore.nextId = 1;
-  int errorArgument = 0, badfile=0;
+  
+  int errorArgument = 0, badfile=0;//variables para mostra o no el menu
   char option;
   
   if (argc>1){
@@ -846,6 +923,8 @@ int main(int argc, char *argv[]) {
     argumentprocessor(bookStore, argc, argv,errorArgument, badfile);
 
   }
+  /*con esta condicion evito que el menu se muestre cuando hay fallo en los
+  argumentos o al abrir ficheros*/
   if ((argc==1) || ((errorArgument==0) && (badfile==0))){
     do {
       showMainMenu();
