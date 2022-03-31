@@ -53,24 +53,44 @@ struct BinBookStore {
   unsigned int nextId;
 };
 /**Inicializo todas las funciones*/
+/*Muestra los mensajes de error*/
 void error(Error e);
+/*Menu del main*/
 void showMainMenu();
+/*Imprime una version resumida del catalogo*/
 void showCatalog(const BookStore &bookStore);
+/*Imprime una version extensa del catalogo*/
 void showExtendedCatalog(const BookStore &bookStore);
+/*Compueba que los nombres introducidos son correctos*/
 bool addControlError(string nombre);
+/*funcion que crea el slug del libro*/
 string slugGenerador(string nombre);
+/*funcion para añadir un libro*/
 void addBook(BookStore &bookStore);
+/*funcion para borrar libros*/
 void deleteBook(BookStore &bookStore);
+/*imprime el menu de la funcion export/import*/
 void showImporExportMenu();
+/*funcion axiliar para añadir libros des un fichero de texto*/
 void createBookImport(BookStore &bookStore, string libro_importado);
+/*funcion para pasar string a char*/
 void stringToChar(string name, char nameConvert[]);
+/*funcion para importar ficheros de texto*/
 void importFromCsv(BookStore &bookStore, string argumentos, int &badfile);
+/*funcion para exportar a fichero de texto*/
 void exportToCsv(const BookStore &bookStore);
+/*funcion axiliar para importar ficheros binarios*/
 void loadDataProcess(BookStore &bookStore, string argumentos,string fileName, int &badfile);
+/*funcion para importar ficheros binarios*/
 void loadData(BookStore &bookStore, string argumentos, int &badfile);
+/*funcion axiliar para exportar ficheros binarios*/
 void saveData(const BookStore &bookStore );
+/*menu de la funcion inport/export*/
 void importExportMenu(BookStore &bookStore, int &badfile) ;
+/*funcion para el control de errores de argumentos
+y selesccion de la orden de ejecucion*/
 void ErrorandSelectArgument(vector<string> argumentos, int argc, int &errorArgument, int &binary, int &text);
+/*funcion para procesar y ejecutar las funciones atraves de argumentos*/
 void argumentprocessor(BookStore &bookStore, int argc, char *argv[], int &errorArgument, int &badfile);
 /*********************************/
 void error(Error e) {
@@ -112,9 +132,11 @@ void showMainMenu() {
        << "q- Quit" << endl
        << "Option: ";
 }
-/*mostrará un listado con información resumida de los libros del catálogo*/
+
 void showCatalog(const BookStore &bookStore) {
-  int canti_libros=bookStore.books.size();
+  //almaceno el tamaño del vector
+  int canti_libros=bookStore.books.size(); 
+  //con el bucle for imprimo los libros almacenados
   for (int a=0;a<canti_libros;a++){
     cout<< bookStore.books[a].id
         << ". " << bookStore.books[a].title
@@ -139,8 +161,12 @@ void showExtendedCatalog(const BookStore &bookStore) {
   }
 }
 bool addControlError(string nombre){
+  /*la funcion recibira un string (autor o titulo)
+  y me duelve un bool para saber si hay errores*/
   bool control=false;
   int longitud=0;
+  /*obtengo la longitud del string para comprobar
+  todas las posciones con el bucle*/
   longitud=nombre.length();
   for (int i=0;i<longitud;i++){
       if((isalnum(nombre[i])==0) && (nombre[i]!=' ') 
@@ -157,10 +183,12 @@ bool addControlError(string nombre){
 }
 
 string slugGenerador(string nombre){
+  /*esta fucion recibe el string nombre y mediante
+  una sucesion de bulces y condiciones ire tranformado el
+  string hasta obtner el slug*/
   string nombre_limpio;
   int recorrido=0;
   
-
   recorrido=nombre.length();
   
   for(int w=0;w<recorrido;w++){
@@ -168,12 +196,15 @@ string slugGenerador(string nombre){
     
   }
   
-
   for(int r=0;r<recorrido;r++){
+
     if(isalnum(nombre[r])==0){
-       nombre[r]=GUION;   
-    }                       //convertir caracters especiales  a "-"
+      nombre[r]=GUION;  //convertir caracters especiales  a "-" 
+    }                       
   }
+
+  /*Elimino los "-" repetidos comprobando dos
+  posiciones de la cadena*/
   int o=0;
   for(int t=0;t<recorrido;t++){
     o=t;
@@ -187,10 +218,14 @@ string slugGenerador(string nombre){
     }
     
   }
+
+  //eliminio guines iniciales
   if (nombre[0]==GUION){
     nombre.erase(0,1);
 
   }
+
+  //elimino guiones finales
   recorrido=nombre.length()-1;
   if (nombre[recorrido]==GUION){
     nombre.erase(recorrido,1);
@@ -201,13 +236,18 @@ string slugGenerador(string nombre){
 
 void addBook(BookStore &bookStore) {
   Book nuevo_libro;
-  bool errorTitle,errorAutor,control3,control4;
+  /*Declaro variables para el control de errores*/
+  bool errorTitle,errorAutor,erroryear,errorPrecio;
   
   /*nombre*/
   do{
+
     cout << "Enter book title: ";
     getline(cin,nuevo_libro.title);
+
+    /*llamo a la funcion control de errores*/
     errorTitle=addControlError(nuevo_libro.title);
+
     if (errorTitle==true){
       error(ERR_BOOK_TITLE);
     }
@@ -219,7 +259,10 @@ void addBook(BookStore &bookStore) {
   do{
     cout << "Enter author(s): ";
     getline(cin,nuevo_libro.authors);
+
+    /*llamo a la funcion control de errores*/
     errorAutor=addControlError(nuevo_libro.authors);
+
     if (errorAutor==true){
       error(ERR_BOOK_AUTHORS);
     }
@@ -230,64 +273,64 @@ void addBook(BookStore &bookStore) {
   do{
     string year;
     int longitud=0;
+
     cout <<"Enter publication year: ";
     getline(cin,year);
-    longitud=year.length();
+
+    //obtengo la longitud y compruebo que no este vacio
+    longitud=year.length(); 
     if (longitud>0){
       
       nuevo_libro.year = stoi(year);//convertir string a entero
 
     }
+    //compruebo que esta en el rango de años
     if((nuevo_libro.year>=1440) && (nuevo_libro.year<=2022)){
 
+      erroryear=false;
       
-      control3=false;
-      
-
     }
     else{
+
       error(ERR_BOOK_DATE);
-      control3=true;
-      
+      erroryear=true;
     }
-    
-    
 
-    
+  }while(erroryear!=false);
 
-  }while(control3!=false);
   /*precio*/
   do{
     string precio;
     int longitud=0;
+
     cout <<"Enter price: ";
     getline(cin,precio);
+
     longitud=precio.length();
     
 
     if (longitud>0){
-      nuevo_libro.price= stof(precio);
-     
+
+      nuevo_libro.price= stof(precio);//convertir string a float
       
     }
     if(nuevo_libro.price>=0){
       
-      control4=false;
+      errorPrecio=false;
     }
     else{
       error(ERR_BOOK_PRICE);
-      control4=true;
+      errorPrecio=true;
     }
 
     
-    
-    
-  }while(control4!=false);
-
-  nuevo_libro.slug=slugGenerador(nuevo_libro.title);
-  nuevo_libro.id=bookStore.nextId;
-  bookStore.nextId++;
-  bookStore.books.push_back(nuevo_libro);
+  }while(errorPrecio!=false);
+  
+  nuevo_libro.slug=slugGenerador(nuevo_libro.title);//creo el slug
+  
+  nuevo_libro.id=bookStore.nextId; //asigno la id
+  bookStore.nextId++;//icremento la id 
+  bookStore.books.push_back(nuevo_libro); //añado el libro al vector
 
 }
 
@@ -295,26 +338,33 @@ void deleteBook(BookStore &bookStore) {
   string id_borrar;
   unsigned int identificador=0;
   int fail=0;
+
+  //obtengo el id
   cout << "Enter book id: ";
   getline(cin,id_borrar);
-  
+
+  //compruebo que no esta vacio
   if (id_borrar.size()<=0){
     error(ERR_ID);
   }
 
+  //convieto el string a entero
   identificador=stoi(id_borrar);
 
+  /*recorro el vector para buscar coincidencias y saber
+  si el id exist*/
   for(int h=0; h<(int)bookStore.books.size();h++){
     if (bookStore.books[h].id==identificador){
       fail++;
       identificador = h;
     }
   }
-
+  
   if (fail==0){
     error(ERR_ID);
   }  
   else{
+    //elimnio el libro
     bookStore.books.erase(bookStore.books.begin() +identificador);
 
   }
@@ -335,8 +385,10 @@ void importFromCsv(BookStore &bookStore, string argumentos, int &badfile){
   
   ifstream fichero;
   string fileName;
+
+  //compruebo si viene por agumento para pedir el nombre del fichero
   if (argumentos.length()>0){
-    fileName=argumentos;
+    fileName=argumentos; //asigno el argumento al nombre del archivo
 
   }
   else{
@@ -351,9 +403,12 @@ void importFromCsv(BookStore &bookStore, string argumentos, int &badfile){
     string libro_importado;
     
       
-    do{
-      while(getline(fichero,libro_importado)){
-          createBookImport(bookStore,libro_importado);
+    do{//leo todas la lines del ficero
+
+      while(getline(fichero,libro_importado)){ 
+
+        //llamo a la funcion axuliar por cada linea del fichero
+        createBookImport(bookStore,libro_importado);
 
       }
       
@@ -361,26 +416,39 @@ void importFromCsv(BookStore &bookStore, string argumentos, int &badfile){
       
 
     fichero.close(); //cierro el fichero
-  }else{
+  }
+  else{
     error(ERR_FILE);
+    /*encaso de veneir por argumento modifico la variable de errores
+    para que no muestre el menu*/
     if (argumentos.length()>0){
-          badfile=1;
-        }
+      badfile=1;
+    }
   }
 }
 void createBookImport(BookStore &bookStore, string libro_importado){
+  /*Para importar libros leo el fichro por lineas almacenadolo ennun string
+  ese string ire trocendolo para obtener la informacion de cada varible del libro*/
   Book nuevo_libro_import;
 
-  string nueva2,nueva3,nueva4;
+  //varibles auxiliras para la moficacion del string
+  string nueva2,nueva3,nueva4; 
   string nombre, autor,year,slug,precio;
+
   bool errorTitle,errorAutor,control3;
   int posicionComa;
 
+  /*Para trocear el string usare las fuciones:
+     erase para eliminar cadena sobrante,
+     substr para obtener la subcadena 
+     find para buscar el caracter que usare de guia tanto 
+     para eliminar trozos de la cadena y generar la subcadenas*/
+
   /*Extrael titulo*/
-  libro_importado.erase(0,1);
-  posicionComa=libro_importado.find(COMILLAS);
-  nombre = libro_importado.substr(0,posicionComa);
-  nuevo_libro_import.title=nombre;
+  libro_importado.erase(0,1); //elimino comillas
+  posicionComa=libro_importado.find(COMILLAS); //busco la siguiente comilla
+  nombre = libro_importado.substr(0,posicionComa); //genero subcadena
+  nuevo_libro_import.title=nombre; //asigno subcadena al titulo
 
   errorTitle=addControlError(nuevo_libro_import.title);
   if (errorTitle==true){
@@ -388,6 +456,7 @@ void createBookImport(BookStore &bookStore, string libro_importado){
   }
 
   if (errorTitle==false){
+
   /*autor*/
     nueva2 = libro_importado.erase(0,posicionComa+3);
     posicionComa=nueva2.find(COMILLAS);
@@ -395,39 +464,50 @@ void createBookImport(BookStore &bookStore, string libro_importado){
     nuevo_libro_import.authors=autor;
 
     errorAutor=addControlError(nuevo_libro_import.authors);
+
     if (errorAutor==true){
       error(ERR_BOOK_AUTHORS);
     }
     if(errorAutor==false){
+
   /*año*/
       nueva3 = nueva2.erase(0,posicionComa+2);
       posicionComa=nueva3.find(COMILLAS);
       year = nueva3.substr(0,posicionComa-1);         
                     
-      if ((year.length()>0) && (year != " ")){           
-        nuevo_libro_import.year = stoi(year);//convertir string a entero
+      if ((year.length()>0) && (year != " ")){  
+
+        nuevo_libro_import.year = stoi(year);
 
       }
       if((nuevo_libro_import.year>=1440) && (nuevo_libro_import.year<=2022)){
-      control3=false;
-      }else{
-      error(ERR_BOOK_DATE);
-      control3=true;
+
+        control3=false;
+        
+      }
+      else{
+
+        error(ERR_BOOK_DATE);
+        control3=true;
                   
       }
   /*slug*/
+
       nueva4 = nueva3.erase(0,posicionComa+1);
       posicionComa=nueva4.find(COMILLAS);
       slug = nueva4.substr(0,posicionComa);
       nuevo_libro_import.slug=slug;
 
-      if(control3==false){
   /*price*/
-       precio = nueva4.erase(0,posicionComa+2);             
-       if (precio.length()>0){
-          nuevo_libro_import.price= stof(precio);      
+      if(control3==false){
+
+       precio = nueva4.erase(0,posicionComa+2); 
+
+       if(precio.length()>0){
+          nuevo_libro_import.price= stof(precio);   
+
         }
-        if(nuevo_libro_import.price>=0){ 
+        if(nuevo_libro_import.price>=0){
           control3=false;
         }
         else{
@@ -450,13 +530,16 @@ void exportToCsv(const BookStore &bookStore){
 
   cout << NAMEFILE;
   getline(cin,fileName);
+
   ficheroEsc.open(fileName,ios::out); //abro y si existe lo machaca
-  if (ficheroEsc.is_open()){
+
+  if (ficheroEsc.is_open()){ //compruebo que se puede abrir
     
     int canti_libros=(int)bookStore.books.size();
     
-    
+    /*guardo en cada linea de fichero un libro con la estructura pedida*/
     for (int a=0;a<canti_libros;a++){
+
         ficheroEsc <<  COMILLAS << bookStore.books[a].title << COMILLAS << ","
          << COMILLAS << bookStore.books[a].authors << COMILLAS << ","
          << bookStore.books[a].year << ","
@@ -472,38 +555,43 @@ void exportToCsv(const BookStore &bookStore){
 }
 void loadDataProcess(BookStore &bookStore, string argumentos,string fileName, int &badfile){
   ifstream ficheroBinLec;
-  ficheroBinLec.open(fileName,ios::in | ios::binary);
-  if (ficheroBinLec.is_open()){
-        BinBookStore binBookstoreLoad;
-        BinBook binbookLoad;
-        Book bookload;
-        
-        bookStore.books.clear();
 
-          ficheroBinLec.read((char *)&binBookstoreLoad, sizeof(BinBookStore));
-          bookStore.name=binBookstoreLoad.name;
-          bookStore.nextId=(binBookstoreLoad.nextId);
-        
+  ficheroBinLec.open(fileName,ios::in | ios::binary);//abro el fichero binario
 
-        while(ficheroBinLec.read((char *)&binbookLoad, sizeof(BinBook))){
+  if (ficheroBinLec.is_open()){//compruebo si se puede abrir
+
+    BinBookStore binBookstoreLoad;
+    BinBook binbookLoad;
+    Book bookload;
+        
+    bookStore.books.clear();//limpio el vector
+
+    //asigno el nombre de la bookstore y el id
+    ficheroBinLec.read((char *)&binBookstoreLoad, sizeof(BinBookStore));
+    bookStore.name=binBookstoreLoad.name;
+    bookStore.nextId=(binBookstoreLoad.nextId);
+        
+    //voy grabando los libros
+    while(ficheroBinLec.read((char *)&binbookLoad, sizeof(BinBook))){
           
-          bookload.id=binbookLoad.id; //id
-          bookload.title=binbookLoad.title; //titulo
-          bookload.authors=binbookLoad.authors; //autor
-          bookload.year=binbookLoad.year; //año
-          bookload.slug=binbookLoad.slug; //slug
-          bookload.price=binbookLoad.price; //precio
+      bookload.id=binbookLoad.id; //id
+      bookload.title=binbookLoad.title; //titulo
+      bookload.authors=binbookLoad.authors; //autor
+      bookload.year=binbookLoad.year; //año
+      bookload.slug=binbookLoad.slug; //slug
+      bookload.price=binbookLoad.price; //precio
 
-          bookStore.books.push_back(bookload);
-        } 
+      bookStore.books.push_back(bookload);
+    } 
         
-        ficheroBinLec.close();
+    ficheroBinLec.close();
   }
   else{
     error(ERR_FILE);
-      if (argumentos.length()>0){
-         badfile=1;
-      }
+
+    if (argumentos.length()>0){
+      badfile=1;
+    }
   }
 }
 
@@ -512,29 +600,37 @@ void loadData(BookStore &bookStore, string argumentos, int &badfile){
   bool comprobar;
   string fileName;
   
-
+  /*Compruebo si el fichero viene por argumentos*/
   if (argumentos.length()>0){
+
+    //asigno el argumento al nombre del archivo
     fileName=argumentos;
+
+    //llamo a la funcion de cargar libros
     loadDataProcess(bookStore,argumentos, fileName,badfile);
   }
   else{
+
     do{
+    //pregunta de seguridad
     cout << "All data will be erased, do you want to continue (Y/N)?: ";
     getline(cin,preguntaSeguridad);
     comprobar = true;
 
     if ((preguntaSeguridad == "Y")||(preguntaSeguridad == "y")){
+
       comprobar = false;
-      
+
+      //pido el nombre del fichero
       cout << NAMEFILE;
       getline(cin,fileName);
 
+      //lamo a la funcion
       loadDataProcess(bookStore,argumentos, fileName,badfile);
-
-      
 
     }
     if((preguntaSeguridad == "N")||(preguntaSeguridad == "n")){
+
       comprobar = false;
       
     }
@@ -547,36 +643,47 @@ void loadData(BookStore &bookStore, string argumentos, int &badfile){
   
 }
 void stringToChar(string name, char nameConvert[]){
-
+ //convieto el string en char recortandolo has la constante-1 
   strncpy(nameConvert, name.c_str(), KMAXSTRING-1);
+ //asigno en la ultima posicion el caracter '\0' 
   nameConvert[KMAXSTRING-1]='\0';
+
 }
 
 void saveData(const BookStore &bookStore ){
-  char fileName[9000];
+  /*en este caso declaro el nombre del fichero como char para 
+  probar las difectes opciones a la hora trabajar con ficheros*/
+
+  char fileName[90];//le asigno un tamaño ya que tiene que ser un char con tamaño constante
   ofstream ficherBinGuardar;
+
   cout << NAMEFILE;
   cin >> fileName;
   cin.get();
 
-  ficherBinGuardar.open(fileName,ios::out | ios::binary);
+  ficherBinGuardar.open(fileName,ios::out | ios::binary); //abro el fichero
 
   if (ficherBinGuardar.is_open()){
     
     BinBookStore binbookstoreSave;
+
     binbookstoreSave.nextId=bookStore.nextId;
+    //ayudandome de la funcion paso el nombre de lña bookstore a char
     stringToChar(bookStore.name,binbookstoreSave.name);
     
+    //alamaceno el nombre de la book store y el id
     ficherBinGuardar.write((const char *)&binbookstoreSave, sizeof(BinBookStore));
     
+    //alaceno libro por libro con el bucle
     for (int unsigned i=0;i<bookStore.books.size();i++){
       BinBook binbookSave;
-      binbookSave.id=bookStore.books[i].id;
-      stringToChar(bookStore.books[i].title,binbookSave.title);
-      stringToChar(bookStore.books[i].authors,binbookSave.authors);
-      binbookSave.year=bookStore.books[i].year;
-      stringToChar(bookStore.books[i].slug,binbookSave.slug);
-      binbookSave.price=bookStore.books[i].price;
+
+      binbookSave.id=bookStore.books[i].id; //id
+      stringToChar(bookStore.books[i].title,binbookSave.title); //char titulo
+      stringToChar(bookStore.books[i].authors,binbookSave.authors); //char autor
+      binbookSave.year=bookStore.books[i].year; //año
+      stringToChar(bookStore.books[i].slug,binbookSave.slug); //char slug
+      binbookSave.price=bookStore.books[i].price; //precio
 
       ficherBinGuardar.write((const char *)&binbookSave, sizeof(BinBook));
      
@@ -584,9 +691,6 @@ void saveData(const BookStore &bookStore ){
     }
 
     ficherBinGuardar.close();
-    
-
-    
 
   }else{
     error(ERR_FILE);
@@ -597,7 +701,7 @@ void saveData(const BookStore &bookStore ){
 
 void importExportMenu(BookStore &bookStore, int &badfile) {
   char option;
-  string argumentos="";
+  string argumentos=""; //declaro el argumento vacio para trabajar sin argumentos
   
   do {
     showImporExportMenu();
@@ -629,11 +733,11 @@ void importExportMenu(BookStore &bookStore, int &badfile) {
 void ErrorandSelectArgument(vector<string> argumentos, int argc, int &errorArgument, int &binary, int &text){
  /*Control de errores*/
   
-  if ((argc==3) || (argc==5)){
+  if ((argc==3) || (argc==5)){ //compruebo conatidad de argumentos
     if ((argumentos[1]=="-l") || (argumentos[1]=="-i")){
       if (argc==5){
-        if ((argumentos[3]=="-l")||(argumentos[3]=="-i")){
-          if (argumentos[1]==argumentos[3]){
+        if ((argumentos[3]=="-l")||(argumentos[3]=="-i")){ 
+          if (argumentos[1]==argumentos[3]){ //compruebo argumentos repetidos
             errorArgument = 1;
           }
 
@@ -654,6 +758,8 @@ void ErrorandSelectArgument(vector<string> argumentos, int argc, int &errorArgum
     errorArgument = 1;
   }
   /*Selecionar argumento*/
+  /*Voy comprobando el orden de los argumentos y nombre del fichero
+  con el que van acopañados*/
     if (errorArgument == 0){
       if(argc==3){
         if (argumentos[1]=="-l"){
