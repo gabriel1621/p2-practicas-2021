@@ -6,7 +6,7 @@
 using namespace std;
 
 class Coordinate{
-    friend ostream& operator<<(ostream &os, );
+    friend ostream& operator<<(ostream &os, const Coordinate &coord );
     protected:
         int row;
         int column;
