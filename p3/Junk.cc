@@ -1,5 +1,4 @@
 #include <"Junk.h">
-#include <"Util.h" >
 #include <iostream>
 
 Junk::Junk(){
@@ -8,27 +7,39 @@ Junk::Junk(){
 
 }
 Junk::Junk(JunkType type, int quantity){
-    type = type;
-    quantity = quantity;
+    this->type = type;
+    
 
     if(quantity<0){
-        Util::error(EXCEPTION_QUANTITY);
+        throw EXCEPTION_QUANTITY;
+    }
+    else{
+        quantity = quantity;
     }
 
 }
-Junk::JunkType getType() const{
+JunkType Junk::getType() const{
     return type;
 }
-Junk::int getQuantity() const{
+int Junk::getQuantity() const{
     return quantity;
 }
-Junk::char getTypeChar() const{
+char Junk:: getTypeChar() const{
+    return type[0];
 
 }
-Junk::int getValue() const{
+int Junk::getValue() const{
+    JunkType WASTELAND = 0;
+    JunkType GOLD = 500;
+    JunkType METAL = 100;
+    JunkType FOOD = 50;
+    JunkType STONE =20;
+
     return type*quantity;
 }
 
 ostream& operator<<(ostream &os, const Junk &junk){
     os<< "[" << junk.type << ':' << junk.quantity << ']' << endl;
+
+    return os;
 }

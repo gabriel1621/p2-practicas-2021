@@ -1,12 +1,14 @@
 #ifndef _Jankali_h
 #define _Jankali_h
 
+#include <vector>
+
 #include <iostream>
 
 using namespace std;
 
 class Jankali{
-    friend ostream& operator<<(ostream &os, );
+    friend ostream& operator<<(ostream &os, const Jankali &jankali );
     protected:
         string name;
         int power;

@@ -6,7 +6,7 @@
 using namespace std;
 
 class Map{
-    friend ostream& operator<<(ostream &os, );
+    friend ostream& operator<<(ostream &os,const Map &map );
     
     protected:
         int rows;

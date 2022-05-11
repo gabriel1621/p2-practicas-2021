@@ -8,31 +8,32 @@ Coordinate::Coordinate{
 }
 
 Coordinate::Coordinate(int row, int column){
-    row=row;
-    column=column;
+    this->row=row;
+    this->column=column;
 }
 
-Coordinate::int getRow() const{
+int Coordinate:: getRow() const{
     return row;
 }
 
-Coordinate::int getColumn() const{
+int Coordinate:: getColumn() const{
     return colum;
 }
 
-Coordinate::void setRow(int row){
+void Coordinate:: setRow(int row){
    row= Util::getRandomNumber(int max);
 
 } 
-Coordinate::void setColumn(int row){
+void Coordinate:: setColumn(int row){
    column= Util::getRandomNumber(int max);
 
 } 
 
-Coordinate::bool compare(const Coordinate &coord){
+bool Coordinate:: compare(const Coordinate &coord){
     return compare;
 }
 
 Coordinate::ostream& operator<<(ostream &or,const Coordinate &coord){
     os << '[' << coord.row << ',' << coord.column << ']' << endl;
+    return os;
 }

@@ -6,7 +6,7 @@
 using namespace std;
 
 class Betonski{
-    friend ostream& operator<<(ostream &os, );
+    friend ostream& operator<<(ostream &os,const Betonski &betonski);
     protected:
         string name;
         int anger;
