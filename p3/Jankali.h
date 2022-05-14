@@ -1,8 +1,8 @@
 #ifndef _Jankali_h
 #define _Jankali_h
-
+#include "Betonski.h"
 #include <vector>
-
+#include "Coordinate.h"
 #include <iostream>
 
 using namespace std;
@@ -17,12 +17,12 @@ class Jankali{
         string getName() const;
         int getPower() const;
         void hunt(vector <Betonski> betonskis);
-        bool setTrap(Coordinate &coord const);
+        bool setTrap(Coordinate &coord) const;
         void spoil();
-        void spoil(type JunkType);
+        void spoil(JunkType type);
         void spoil(int pos);
         
         
-}
+};
 
 #endif

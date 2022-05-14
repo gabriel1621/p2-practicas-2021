@@ -1,7 +1,9 @@
-#ifndef _Betonski_h
+/*#ifndef _Betonski_h
 #define _Betonski_h
-
+#include "Coordinate.h"
+#include "Map.h"
 #include <iostream>
+#include "Util.h"
 
 using namespace std;
 
@@ -19,15 +21,15 @@ class Betonski{
         Coordinate getPosition() const;
         void captured();
         void setPosition();
-        int calculateValue(type JunkType) const;
+        int calculateValue(JunkType type) const;
         int spoliation();
-        int spoliation(type JunkType);
+        int spoliation(JunkType type);
         int extract(Map &map);
-        bool move(Map &map const);
+        bool move(Map &map) const;
         
 
 
         
-}
+};
 
-#endif
+#endif*/

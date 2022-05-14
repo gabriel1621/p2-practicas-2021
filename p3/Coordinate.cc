@@ -1,6 +1,6 @@
 #include <iostream>
-#include <"Coordinate.h">
-#include <Util.h>
+#include "Coordinate.h"
+#include "Util.h"
 
 Coordinate::Coordinate{
     row=-1;
@@ -17,20 +17,32 @@ int Coordinate:: getRow() const{
 }
 
 int Coordinate:: getColumn() const{
-    return colum;
+    return column;
 }
 
 void Coordinate:: setRow(int row){
-   row= Util::getRandomNumber(int max);
+   this->row= Util::getRandomNumber(int max);
 
 } 
 void Coordinate:: setColumn(int row){
-   column= Util::getRandomNumber(int max);
+   this->column= Util::getRandomNumber(int max);
 
 } 
 
 bool Coordinate:: compare(const Coordinate &coord){
-    return compare;
+    bool coordenaditas;
+    if (this->row==-1){
+        if(this->column==-1){
+            coordenaditas=true;
+        }
+        else{
+            coordenaditas=false;
+        }
+    }
+    else{
+        coordenaditas=false;
+    }
+    return coordenaditas;
 }
 
 Coordinate::ostream& operator<<(ostream &or,const Coordinate &coord){

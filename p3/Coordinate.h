@@ -15,10 +15,10 @@ class Coordinate{
         Coordinate( int row, int column);
         int getRow() const;
         int getColumn() const;
-        void setRow(int row){this->row=row;}
-        void setColumn(int column){this->column=column;}
-        bool compare(Coordinate &coord const) const;
+        void setRow(int row);
+        void setColumn(int column);
+        bool compare(Coordinate &coord) const;
         
-}
+};
 
 #endif

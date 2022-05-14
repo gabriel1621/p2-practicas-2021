@@ -1,5 +1,6 @@
-#include <"Junk.h">
-#include <iostream>
+#include "Junk.h"
+
+
 
 Junk::Junk(){
     type = WASTELAND;
@@ -25,21 +26,53 @@ int Junk::getQuantity() const{
     return quantity;
 }
 char Junk:: getTypeChar() const{
-    return type[0];
+    char letratipo;
+     switch (type){
+        case 0:
+            letratipo='W';
+            break;
+        case 1:
+            letratipo='G';
+            break;
+        case 2:
+            letratipo='M';
+            break;
+        case 3:
+            letratipo='F';
+            break;
+        case 4:
+            letratipo='S';
+            break;
+    }
+    return letratipo;
 
 }
 int Junk::getValue() const{
-    JunkType WASTELAND = 0;
-    JunkType GOLD = 500;
-    JunkType METAL = 100;
-    JunkType FOOD = 50;
-    JunkType STONE =20;
+    int value=0;
 
-    return type*quantity;
+    switch (type){
+        case 0:
+            value=0;
+            break;
+        case 1:
+            value=500;
+            break;
+        case 2:
+            value=100;
+            break;
+        case 3:
+            value=50;
+            break;
+        case 4:
+            value=20;
+            break;
+    }
+
+    return value*quantity;
 }
 
 ostream& operator<<(ostream &os, const Junk &junk){
-    os<< "[" << junk.type << ':' << junk.quantity << ']' << endl;
+    os<< "[" << junk.getType() << ':' << junk.getQuantity() << ']' << endl;
 
     return os;
 }
