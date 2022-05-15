@@ -1,4 +1,4 @@
-#ifndef _Jankali_h
+/*#ifndef _Jankali_h
 #define _Jankali_h
 #include "Betonski.h"
 #include <vector>
@@ -25,4 +25,4 @@ class Jankali{
         
 };
 
-#endif
+#endif*/

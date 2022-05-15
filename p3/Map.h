@@ -1,4 +1,4 @@
-#ifndef _Map_h
+/*#ifndef _Map_h
 #define _Map_h
 #include "Junk.h"
 #include "Coordinate.h"
@@ -21,4 +21,4 @@ class Map{
         
 };
 
-#endif
+#endif*/

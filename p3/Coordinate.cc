@@ -2,7 +2,7 @@
 #include "Coordinate.h"
 #include "Util.h"
 
-Coordinate::Coordinate{
+Coordinate::Coordinate(){
     row=-1;
     column=-1;
 }
@@ -21,31 +21,32 @@ int Coordinate:: getColumn() const{
 }
 
 void Coordinate:: setRow(int row){
-   this->row= Util::getRandomNumber(int max);
+    
+    
+   this->row=Util::getRandomNumber(row);
 
 } 
 void Coordinate:: setColumn(int row){
-   this->column= Util::getRandomNumber(int max);
+    
+   this->column= Util::getRandomNumber(column);
 
 } 
 
-bool Coordinate:: compare(const Coordinate &coord){
+bool Coordinate::compare(Coordinate &coord) const{
     bool coordenaditas;
-    if (this->row==-1){
-        if(this->column==-1){
+    if (this->row != -1){
+        if(this->column != -1){
             coordenaditas=true;
         }
-        else{
-            coordenaditas=false;
-        }
+        
     }
     else{
-        coordenaditas=false;
+        coordenaditas=true;
     }
     return coordenaditas;
 }
 
-Coordinate::ostream& operator<<(ostream &or,const Coordinate &coord){
-    os << '[' << coord.row << ',' << coord.column << ']' << endl;
+ostream& operator<<(ostream &os,const Coordinate &coord){
+    os << '[' << coord.getRow() << ',' << coord.getColumn() << ']' << endl;
     return os;
 }
