@@ -17,6 +17,7 @@ class Junk{
         int getQuantity() const;
         char getTypeChar() const;
         int getValue() const;
+        string conversion(JunkType type)const;
 
         
 };

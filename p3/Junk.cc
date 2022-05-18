@@ -15,11 +15,13 @@ Junk::Junk(JunkType type, int quantity){
         throw EXCEPTION_QUANTITY;
     }
     else{
-        quantity = quantity;
+        this->quantity = quantity;
     }
 
 }
 JunkType Junk::getType() const{
+     
+
     return type;
 }
 int Junk::getQuantity() const{
@@ -28,19 +30,19 @@ int Junk::getQuantity() const{
 char Junk:: getTypeChar() const{
     char letratipo;
      switch (type){
-        case 0:
+        case WASTELAND:
             letratipo='W';
             break;
-        case 1:
+        case GOLD:
             letratipo='G';
             break;
-        case 2:
+        case METAL:
             letratipo='M';
             break;
-        case 3:
+        case FOOD:
             letratipo='F';
             break;
-        case 4:
+        case STONE:
             letratipo='S';
             break;
     }
@@ -49,30 +51,51 @@ char Junk:: getTypeChar() const{
 }
 int Junk::getValue() const{
     int value=0;
-
-    switch (type){
-        case 0:
+    
+   switch (this->type){
+        case WASTELAND:
             value=0;
             break;
-        case 1:
+        case GOLD:
             value=500;
             break;
-        case 2:
+        case METAL:
             value=100;
             break;
-        case 3:
+        case FOOD:
             value=50;
             break;
-        case 4:
+        case STONE:
             value=20;
             break;
     }
 
     return value*quantity;
 }
-
+string Junk::conversion(JunkType type) const{
+    string typee;
+    switch(type){
+        case WASTELAND:
+            typee="WASTELAND";
+            break;
+        case GOLD:
+            typee="GOLD";
+            break;
+        case METAL:
+            typee="METAL";
+            break;
+        case FOOD:
+            typee="FOOD";
+            break;
+        case STONE:
+            typee="STONE";
+            break;
+    }
+    return typee;
+}
 ostream& operator<<(ostream &os, const Junk &junk){
-    os<< "[" << junk.getType() << ':' << junk.getQuantity() << ']' << endl;
+    JunkType tipo=junk.getType();
+    os<< "[" << junk.conversion(tipo) << ':' << junk.getQuantity() << ']' << endl;
 
     return os;
 }

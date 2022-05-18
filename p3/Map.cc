@@ -36,11 +36,26 @@ bool Map::isInside(const Coordinate &coord) const{
     return cordenadaOK;
     
 }
-void putJunk(const Junk &junk,const Coordinate &coord){
-    if (isInside){
+void Map::putJunk(const Junk &junk,const Coordinate &coord){
+
+    if (map.isInside()==true){
 
     }
     else{
         throw EXCEPTION_OUTSIDE;
+    }
+}
+Junk Map::getJunk(const Coordinate &coord) const{
+
+}
+Junk Map::collectJunk(const Coordinate &coord){
+
+}
+ostream& operator<<(ostream &os,const Map &map){
+    os<<"";
+    for(int i=0;i<rows;i++){
+        for(int j=0;j<columns;j++){
+            os<<
+        }
     }
 }*/

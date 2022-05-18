@@ -22,31 +22,29 @@ int Coordinate:: getColumn() const{
 
 void Coordinate:: setRow(int row){
     
-    
-   this->row=Util::getRandomNumber(row);
+    this->row=row;
+   
 
 } 
-void Coordinate:: setColumn(int row){
-    
-   this->column= Util::getRandomNumber(column);
+void Coordinate:: setColumn(int column){
+    this->column=column;
+   
 
 } 
 
-bool Coordinate::compare(Coordinate &coord) const{
-    bool coordenaditas;
-    if (this->row != -1){
-        if(this->column != -1){
-            coordenaditas=true;
-        }
-        
+bool Coordinate::compare(const Coordinate &coord) const{
+   
+
+    if ((this->row == coord.row)&&(this->column== coord.column)){
+        return true;
     }
     else{
-        coordenaditas=true;
+        return false;
     }
-    return coordenaditas;
+    
 }
 
 ostream& operator<<(ostream &os,const Coordinate &coord){
-    os << '[' << coord.getRow() << ',' << coord.getColumn() << ']' << endl;
+    os << '[' << coord.getRow() << ',' << coord.getColumn() << ']';
     return os;
 }

@@ -17,7 +17,7 @@ class Coordinate{
         int getColumn() const;
         void setRow(int row);
         void setColumn(int column);
-        bool compare(Coordinate &coord) const;
+        bool compare(const Coordinate &coord) const;
         
 };
 
