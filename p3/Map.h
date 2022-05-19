@@ -1,4 +1,4 @@
-/*#ifndef _Map_h
+#ifndef _Map_h
 #define _Map_h
 #include "Junk.h"
 #include "Coordinate.h"
@@ -14,11 +14,11 @@ class Map{
         int columns;
     public:
         Map(int rows, int columns);
-        bool isInside(Coordinate &coord )const;
-        void putJunk(Junk &junk, Coordinate &coord )const;
-        Junk getJunk(Coordinate &coord )const;
-        Junk collectJunk(Coordinate &coord )const;     
+        bool isInside(const Coordinate &coord )const;
+        void putJunk(const Junk &junk, const Coordinate &coord )const;
+        Junk getJunk(const Coordinate &coord )const;
+        Junk collectJunk(const Coordinate &coord )const;     
         
 };
 
-#endif*/
+#endif

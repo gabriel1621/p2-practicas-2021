@@ -1,4 +1,4 @@
-/*#include "Map.h"
+#include "Map.h"
 #include "Junk.h"
 #include "Util.h"
 #include <vector>
@@ -9,53 +9,75 @@ Map::Map(int rows, int columns){
         throw EXCEPTION_SIZE;
     }
     else{
-        rows=rows;
-        columns=columns;
+        this->rows=rows;
+        this->columns=columns;
     }
+    Junk nuevoRecurso;
     vector<vector<Junk>> junks;
-    for (int i=0;i<rows;i++){
-        Junk nuevoRecurso;
-        JunkType recurso= recurso.Junk();
+    for (int i=0;i<columns;i++){
+        
 
-        for (int j=0;j<columns;j++){
+        for (int j=0;j<rows;j++){
 
-            Junk.push_back(nuevoRecurso);
+            //junks.Junk.push_back(nuevoRecurso);
         }
 
-        junks.push_back(Junk);
+        //junks.push_back(Junk);
     }
 
 
 }
 bool Map::isInside(const Coordinate &coord) const{
-    bool cordenadaOK = false;
-    if (((row.coord>0)&&(row.coord<=rows)) || ((column.coord>0)&&(column.coord<=columns))){
-        filaok=true;
+    
+    if (((coord.getRow()>=0)&&(coord.getRow()<=rows)) || ((coord.getColumn()>0)&&(coord.getColumn()<=columns))){
+        return true;
+    }
+    else{
+        return false;
     }
 
-    return cordenadaOK;
+
     
 }
-void Map::putJunk(const Junk &junk,const Coordinate &coord){
+void Map::putJunk(const Junk &junk,const Coordinate &coord)const{
+    /*bool x=Map.isInside();
+    if (x==true){
+        
 
-    if (map.isInside()==true){
+    }
+    else{
+        throw EXCEPTION_OUTSIDE;
+    }*/
+}
+Junk Map::getJunk(const Coordinate &coord) const{
+   /* if (isInside()==true){
+        
+        return Junk;
+    }
+    else{
+        throw EXCEPTION_OUTSIDE;
+    }
+
+*/
+}
+Junk Map::collectJunk(const Coordinate &coord)const {
+  /*  if (isInside()==true){
+        JunkType recursoRemplazado;
+        recursoRemplazado=WASTELAND;
+
+        Junk.push_back(recursoRemplazado)
 
     }
     else{
         throw EXCEPTION_OUTSIDE;
     }
-}
-Junk Map::getJunk(const Coordinate &coord) const{
-
-}
-Junk Map::collectJunk(const Coordinate &coord){
-
+*/
 }
 ostream& operator<<(ostream &os,const Map &map){
     os<<"";
-    for(int i=0;i<rows;i++){
-        for(int j=0;j<columns;j++){
-            os<<
+    for(int i=0;i<map.rows;i++){
+        for(int j=0;j<map.columns;j++){
+            //os<<
         }
     }
-}*/
+}
