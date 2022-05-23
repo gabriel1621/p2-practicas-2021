@@ -1,4 +1,4 @@
-/*#ifndef _Betonski_h
+#ifndef _Betonski_h
 #define _Betonski_h
 #include "Coordinate.h"
 #include "Map.h"
@@ -10,26 +10,30 @@ using namespace std;
 class Betonski{
     friend ostream& operator<<(ostream &os,const Betonski &betonski);
     protected:
+        vector<Junk>bag;
         string name;
         int anger;
         bool captured;
+        Coordinate position;
     public:
         Betonski(string name);
-        string getName() const;
-        int getAnger() const;
-        bool isCaptured() const;
+        string getName() const{return name;}
+        int getAnger() const{return anger;}
+        bool isCaptured() const{return captured;}
         Coordinate getPosition() const;
-        void captured();
-        void setPosition();
+        void capture();
+        void setPosition(const Coordinate &coord);
+        int calculateValue()const;
         int calculateValue(JunkType type) const;
         int spoliation();
         int spoliation(JunkType type);
         int extract(Map &map);
-        bool move(Map &map) const;
+        bool move(const Map &map) const;
+        string traduCapture() const;
         
 
 
         
 };
 
-#endif*/
+#endif

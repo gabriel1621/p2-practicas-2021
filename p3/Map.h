@@ -3,6 +3,7 @@
 #include "Junk.h"
 #include "Coordinate.h"
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -10,6 +11,7 @@ class Map{
     friend ostream& operator<<(ostream &os,const Map &map );
     
     protected:
+        vector<vector<Junk>> junks;
         int rows;
         int columns;
     public:

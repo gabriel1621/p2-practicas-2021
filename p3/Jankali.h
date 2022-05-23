@@ -1,4 +1,4 @@
-/*#ifndef _Jankali_h
+#ifndef _Jankali_h
 #define _Jankali_h
 #include "Betonski.h"
 #include <vector>
@@ -12,11 +12,13 @@ class Jankali{
     protected:
         string name;
         int power;
+        Coordinate traps;
+        vector <Betonski> subdued;
     public:
         Jankali( string name);
         string getName() const;
         int getPower() const;
-        void hunt(vector <Betonski> betonskis);
+        void hunt(vector <Betonski *> betonskis);
         bool setTrap(Coordinate &coord) const;
         void spoil();
         void spoil(JunkType type);
@@ -25,4 +27,4 @@ class Jankali{
         
 };
 
-#endif*/
+#endif
