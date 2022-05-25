@@ -5,28 +5,30 @@
 
 Map::Map(int rows, int columns){
 
-    if ((rows<=5)||(columns<=5)){
+    if ((rows<5)||(columns<5)){
         throw EXCEPTION_SIZE;
     }
     else{
         this->rows=rows;
         this->columns=columns;
-    }
-    
-    
-    for (int i=0;i<columns;i++){
+        vector <Junk> recursos;
+        for (int i=0;i<columns;i++){
         
 
-        for (int j=0;j<rows;j++){
-            Junk recurso=Junk();
-            Junk recursos;
+         for (int j=0;j<rows;j++){
+                Junk recurso;
             
-            Junk.recursos.push_back(recurso);
-            junks.push_back(Junk);
-        }
+            
+                recursos.push_back(recurso);
 
+            
+            }
+            junks.push_back(recursos);
         
+        }
     }
+    
+    
 
 
 }
@@ -42,44 +44,110 @@ bool Map::isInside(const Coordinate &coord) const{
 
     
 }
-void Map::putJunk(const Junk &junk,const Coordinate &coord)const{
-    /*if (isInside(&coord)==true){
-        
+void Map::putJunk(const Junk &junk,const Coordinate &coord){
+    if (isInside(coord)==true){
+        junks[coord.getRow()][coord.getColumn()] = junk;
+
         
     }
     else{
         throw EXCEPTION_OUTSIDE;
-    }*/
+    }
 }
 Junk Map::getJunk(const Coordinate &coord) const{
-   /* if (isInside()==true){
+    if (isInside(coord)==true){ 
+               
+        return (junks[coord.getRow()][coord.getColumn()] );
+    }
+    else{
+        throw EXCEPTION_OUTSIDE;
+    }
+
+
+}
+Junk Map::collectJunk(const Coordinate &coord){
+    Junk rmplaza,rtunjunk;
+    if (isInside(coord)==true){ 
         
-        return Junk;
+        
+        rtunjunk=junks[coord.getRow()][coord.getColumn()];
+        junks[coord.getRow()][coord.getColumn()]=rmplaza;
+        return rtunjunk;
     }
     else{
         throw EXCEPTION_OUTSIDE;
     }
-
-*/
 }
-Junk Map::collectJunk(const Coordinate &coord)const {
-  /*  if (isInside()==true){
-        JunkType recursoRemplazado;
-        recursoRemplazado=WASTELAND;
+char Map::charType(int row, int column)const{
+    
+    Junk recuposicion;
+    recuposicion = junks[row][column];
+    JunkType typo;
+    
+    typo=recuposicion.getType();
+    char letratipo;
 
-        Junk.push_back(recursoRemplazado)
-
+   switch (typo){
+        case WASTELAND:
+            letratipo=' ';
+            break;
+        case GOLD:
+            letratipo='G';
+            break;
+        case METAL:
+            letratipo='M';
+            break;
+        case FOOD:
+            letratipo='F';
+            break;
+        case STONE:
+            letratipo='S';
+            break;
     }
-    else{
-        throw EXCEPTION_OUTSIDE;
-    }
-*/
+    return letratipo;
 }
+
 ostream& operator<<(ostream &os,const Map &map){
-    os<<"";
-    /*for(int i=0;i<map.rows;i++){
-        for(int j=0;j<map.columns;j++){
-            //os<<
+    os <<"   ";
+
+    
+    
+        for (int i=0;i<map.rows;i++){
+            
+           if (i<10){
+              os<<"0"<<i<<" ";
+              
+            }
+            else{
+                os <<i<<" ";
+                
+            }   
+            
         }
-    }*/
+        os <<endl;
+
+        for (int j=0;j<map.rows;j++){
+            for (int x=0;x<map.columns;x++){
+           
+                if (x==0){
+                    int num =x+j;
+                    if (num<10){
+                     os<<"0"<<num<<" ";
+              
+                    }
+                    else{
+                        os <<num<<" ";
+
+                    }   
+                }
+                else{
+
+                  os <<map.charType(j,x)<<"  ";
+                }
+           
+
+            } 
+            os <<endl;
+        } 
+    return os;
 }

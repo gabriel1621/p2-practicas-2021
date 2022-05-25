@@ -17,9 +17,10 @@ class Map{
     public:
         Map(int rows, int columns);
         bool isInside(const Coordinate &coord )const;
-        void putJunk(const Junk &junk, const Coordinate &coord )const;
+        void putJunk(const Junk &junk, const Coordinate &coord );
         Junk getJunk(const Coordinate &coord )const;
-        Junk collectJunk(const Coordinate &coord )const;     
+        Junk collectJunk(const Coordinate &coord );  
+        char charType(int row, int column)const;   
         
 };
 

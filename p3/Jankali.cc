@@ -1,5 +1,5 @@
 #include "Jankali.h"
-
+/*
 Jankali::Jankali(string name){
     this->name=name;
     power=300;
@@ -26,3 +26,9 @@ bool Jankali::setTrap(const Coordinate &coord){
         return false;
     }
 }
+void Jankali::spoil(){
+
+}
+void Jankali::spoil(JunkType type){
+
+}*/

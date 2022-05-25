@@ -3,11 +3,15 @@
 #include "Util.h"
 
 Betonski::Betonski(string name){
-    this->name=name;
-    captured=false;
-    anger=0;
+    
     if (name.length()<1){
         throw EXCEPTION_NAME;
+    }
+    else{
+        this->name=name;
+        captured=false;
+        anger=0;
+        Coordinate position;
     }
 
 }
@@ -20,12 +24,21 @@ void Betonski::capture(){
 }
 void Betonski::setPosition(const Coordinate &coord){
 
-
+    position=coord;
 }
 int Betonski::calculateValue() const{
-    //return Junk.getValue();
+    int suma;
+    for (i=0;i<bag.size();++i){
+        suma=suma+bag[i].getValue();
+    }
+    return suma;
 }
 int Betonski::calculateValue(JunkType type) const{
+    int suma;
+    
+    suma=suma+bag[type].getValue();
+    
+    return suma;
 
 }
 int Betonski::spoliation(){
@@ -36,11 +49,15 @@ int Betonski::spoliation(){
     else{
         if(spoli>5000){
             anger=0;
+            captured=false;
             throw EXCEPTION_REBELION;
 
         }
         else{
-            //lo funan
+            anger=calculateValue();
+            for (i=bag.size();i>0;--i){
+                bag[i].erase();
+            }
         }
     }
 
@@ -53,23 +70,46 @@ int Betonski::spoliation(JunkType type){
     else{
         if(spoli>5000){
             anger=0;
-            throw EXCEPTION_REBELION;
+            captured=false;
+            throw EXCEPTION_REBELION;N;
 
         }
         else{
-            //lo funan
+            anger=calculateValue(type);
+            bag[type].erase();
         }
     }
 
 }
 int Betonski::extract(Map &map){
+    if(map.isInside(position)){
+     Junk nuevorecu;
+     nuevorecu=map.collectJunk(coord);
 
+     
+        if (nuevorecu!=WASTELAND){
+         bag.push_back(nuevorecu);
+         return nuevorecu.getValue()
+        }
+        else{
+            return 0;
+        }
+
+    }
+    
 }
 bool Betonski::move(const Map &map) const{
     if (map.isInside(position)==true){
+        
         int num=Util::getRandomNumber(8);
         return true;
+
+        switch(num){
+            case 0:
+                position=[]
+        }
         
+
     }
     else{
         throw EXCEPTION_OUTSIDE;
@@ -95,4 +135,5 @@ ostream& operator<<(ostream &os,const Betonski &betonski){
         <<"[STONE:"<<betonski.calculateValue(STONE)<<"] "
         <<"[FOOD:"<<betonski.calculateValue(FOOD)<<"] ";
     }
+    return os;
 }
