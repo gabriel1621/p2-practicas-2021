@@ -1,6 +1,7 @@
 #include "Betonski.h"
 #include <string.h>
 #include "Util.h"
+#include <vector>
 
 Betonski::Betonski(string name){
     
@@ -27,26 +28,30 @@ void Betonski::setPosition(const Coordinate &coord){
     position=coord;
 }
 int Betonski::calculateValue() const{
-    int suma;
-    for (i=0;i<bag.size();++i){
+    int suma=0;
+    
+    for (unsigned int i=0;i<bag.size();i++){
         suma=suma+bag[i].getValue();
     }
     return suma;
 }
 int Betonski::calculateValue(JunkType type) const{
-    int suma;
-    
-    suma=suma+bag[type].getValue();
-    
+    int suma=0;
+    for (unsigned int i=0;i<bag.size();i++){
+       if (bag[i].getType()==type){ 
+        suma=suma+bag[i].getValue();}
+    }
     return suma;
 
 }
 int Betonski::spoliation(){
-    int spoli=calculateValue()+getAnger();
+    
     if (isCaptured()==false){
         throw BETONSKI_NOT_CAPTURED;
     }
     else{
+        int spoli=calculateValue()+anger;
+
         if(spoli>5000){
             anger=0;
             captured=false;
@@ -54,59 +59,120 @@ int Betonski::spoliation(){
 
         }
         else{
-            anger=calculateValue();
-            for (i=bag.size();i>0;--i){
-                bag[i].erase();
+            anger=anger+calculateValue();
+            for (int i=bag.size();i>0;--i){
+                bag.erase(bag.begin()+i);
             }
+            
         }
+        return calculateValue();
     }
+    
 
 }
 int Betonski::spoliation(JunkType type){
-    int spoli=calculateValue(type)+getAnger();
+    
     if (isCaptured()==false){
         throw BETONSKI_NOT_CAPTURED;
     }
     else{
+        int valor = calculateValue(type);
+        int spoli=calculateValue(type)+anger;
         if(spoli>5000){
             anger=0;
             captured=false;
-            throw EXCEPTION_REBELION;N;
+            throw EXCEPTION_REBELION;
 
         }
         else{
-            anger=calculateValue(type);
-            bag[type].erase();
+            anger=anger+calculateValue(type);
+            for (unsigned int i=0;i<bag.size();i++){
+                if (bag[i].getType()==type){
+                    bag.erase(bag.begin()+i);
+                    i--;
+
+                }
+
+            }
+            
+           
         }
+        return valor;
     }
+    
 
 }
 int Betonski::extract(Map &map){
     if(map.isInside(position)){
      Junk nuevorecu;
-     nuevorecu=map.collectJunk(coord);
-
+     JunkType ntypo;
+     nuevorecu=map.collectJunk(position);
+     ntypo=nuevorecu.getType();
      
-        if (nuevorecu!=WASTELAND){
-         bag.push_back(nuevorecu);
-         return nuevorecu.getValue()
+        if (ntypo!=WASTELAND){
+            bag.push_back(nuevorecu);
+
+            return (nuevorecu.getValue());
         }
         else{
             return 0;
         }
 
     }
+    else{
+        throw EXCEPTION_OUTSIDE;
+    }
     
 }
-bool Betonski::move(const Map &map) const{
+bool Betonski::move(const Map &map){
     if (map.isInside(position)==true){
         
         int num=Util::getRandomNumber(8);
-        return true;
-
+        int rowa=position.getRow();
+        int columna=position.getColumn();
+        
+        Coordinate nposition;
         switch(num){
             case 0:
-                position=[]
+                nposition.setRow(rowa-1);
+                nposition.setColumn(columna);
+                break;
+            case 1:
+                nposition.setRow(rowa-1);
+                nposition.setColumn(columna+1);
+                break;
+            case 2:
+                nposition.setRow(rowa);
+                nposition.setColumn(columna+1);
+                break;    
+            case 3:
+                nposition.setRow(rowa+1);
+                nposition.setColumn(columna+1);
+                break;
+            case 4:
+                nposition.setRow(rowa+1);
+                nposition.setColumn(columna);
+                break;
+            case 5:
+                nposition.setRow(rowa+1);
+                nposition.setColumn(columna-1);
+                break;
+            case 6:
+                nposition.setRow(rowa);
+                nposition.setColumn(columna-1);
+                break;
+            case 7:
+                nposition.setRow(rowa-1);
+                nposition.setColumn(columna-1);
+                break;
+
+        }
+        if(map.isInside(nposition)){
+            setPosition(nposition);
+            return true;
+        }
+        else{
+            return false;
         }
         
 
@@ -117,23 +183,27 @@ bool Betonski::move(const Map &map) const{
 
 }
 string Betonski::traduCapture() const{
-    if (isCaptured()==false){
-        return "Free";
+    if (isCaptured()){
+        return " Captured ";
     }
     else{
-       return "Captured";
+       return " Free ";
     }
 
 }
 ostream& operator<<(ostream &os,const Betonski &betonski){
-    os<<"Betonski "<<'"'<<betonski.getName()<<'"'<<betonski.traduCapture()<<betonski.getAnger()<<betonski.getPosition()<<endl;
-    if (betonski.calculateValue()<1){
+    
+    
+   
+        os<<"Betonski "<<'"'<<betonski.getName()<<'"'<<betonski.traduCapture()<<betonski.getAnger()<<betonski.getPosition()<<endl;
+    if (betonski.bag.size()==0){
         os<<"";
     }
     else{
-        os<<"[GOLD:"<<betonski.calculateValue(GOLD)<<"] "
-        <<"[STONE:"<<betonski.calculateValue(STONE)<<"] "
-        <<"[FOOD:"<<betonski.calculateValue(FOOD)<<"] ";
+       for (unsigned int i=0;i<betonski.bag.size();i++){
+           JunkType tipo=betonski.bag[i].getType();
+            os<<'['<<betonski.bag[i].conversion(tipo)<<':'<<betonski.bag[i].getQuantity()<<"] ";
+        }
     }
     return os;
 }

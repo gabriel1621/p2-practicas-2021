@@ -12,14 +12,14 @@ class Jankali{
     protected:
         string name;
         int power;
-        Coordinate traps;
+        vector <Coordinate> traps;
         vector <Betonski> subdued;
     public:
         Jankali( string name);
         string getName() const;
         int getPower() const;
         void hunt(vector <Betonski *> betonskis);
-        bool setTrap(Coordinate &coord) const;
+        bool setTrap(const Coordinate &coord);
         void spoil();
         void spoil(JunkType type);
         void spoil(int pos);

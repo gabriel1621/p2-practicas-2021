@@ -28,7 +28,7 @@ class Betonski{
         int spoliation();
         int spoliation(JunkType type);
         int extract(Map &map);
-        bool move(const Map &map) const;
+        bool move(const Map &map);
         string traduCapture() const;
         
 
