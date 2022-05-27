@@ -1,3 +1,4 @@
+//DNI 48775081Q, Gabriel Pardo
 #include "Jankali.h"
 
 Jankali::Jankali(string name){
@@ -19,29 +20,43 @@ int Jankali::getPower() const{
 }
 void Jankali::hunt(vector<Betonski *>betonskis){
     
-    for (unsigned int i=0;i<traps.size();i++){
-        *(betonskis).getPosition();
-        if(*(betonskis->getPosition()==traps[i])&&(betonskis->captured==false)){
-            *(betonskis)captured=true;
-            subdued.push_back(*Betonski);
+    for (unsigned int j=0;j<betonskis.size();j++){
+        for (unsigned int i=0;i<traps.size();i++){
+
+            Coordinate betoCord=betonskis[j]->getPosition();
+
+            if (traps[i].compare(betoCord)){
+
+                if(betonskis[j]->isCaptured()==false){
+
+                    betonskis[j]->capture();
+                    subdued.push_back(betonskis[j]);
+
+                }
+
+            }
+            
 
         }
-
     }
     
 
 }
 bool Jankali::setTrap(const Coordinate &coord){
-    unsigned int contador=0;
+    
     bool vacio=false;
-    do{
-        if( (traps[contador].getRow() != coord.getRow()) && (traps[contador].getColumn() != coord.getColumn()) ){
+
+    for (unsigned int i=0; i<traps.size();i++){
+        if (traps[i].compare(coord)==true ){
             vacio=true;
         }
 
-    }while((vacio==true)||contador==traps.size());
+    }
+    
+
     int coste=(coord.getRow()+2)*(coord.getColumn()+2);
-    if ((vacio==true)&&(power>coste)){
+
+    if ((vacio==false)&&(power>=coste)){
         traps.push_back(coord);
         
         power=power-coste;
@@ -52,52 +67,72 @@ bool Jankali::setTrap(const Coordinate &coord){
     }
 }
 void Jankali::spoil(){
-    int suma;
-    bool rebelado;
-    for(unsigned int i=subdued.size();i>=0;--i){
-        rebelado=true;
+    int suma=0;
+    
+    for(unsigned int i=0;i<subdued.size();i++){
+        
         try{
             (suma=subdued[i]->spoliation());
+            power=(power)+suma;
         }
-        catch (){
-            rebelado=false;
+        catch (...){
+            
             subdued.erase(subdued.begin()+i);
+            i--;
         }
-        if(rebelado==true){
-            this->power=(this->power)+suma;
-        }
+       
     }
 
 }
 void Jankali::spoil(JunkType type){
-    int suma;
-    bool rebelado=true;
-    
+    int suma=0;
+     for(unsigned int i=0;i<subdued.size();i++){
         
         try{
-            (suma=subdued[type]->spoliation());
+            suma=subdued[i]->spoliation(type);
+            power=(power)+suma;
         }
-        catch(){
-            rebelado=false;
-            subdued.erase(subdued.begin()+type);
+        catch (...){
+            
+            subdued.erase(subdued.begin()+i);
+            i--;
         }
-        if(rebelado==true){
-            this->power=(this->power)+suma;
-        }
+       
+    }
     
 
 }
 void Jankali::spoil(int pos){
+    int suma=0;
+    int l=subdued.size();
+    for (int i=0; i<l ;i++){
+        if (i==pos){
+            try{
+                suma=subdued[i]->spoliation();
+                power=(power)+suma;
+            }
+            catch(...){
+            
+             subdued.erase(subdued.begin()+i);
+             i--;
+            }
+            
+        }
+    }
+    
+    
+   
 
 }
 ostream& operator<<(ostream &os,const Jankali &jankali){
-    os<<"Jankali "<<'"'<<jankali.getName()<<'"'<<" "<<jankali.getPower()<<endl;
+    os<<"Jankali "<<'"'<<jankali.name<<'"'<<" "<<jankali.power<<endl;
     for (unsigned int i=0;i<jankali.subdued.size();i++){
-        os<<*(jankali.subdued[i])<<endl;
+        os<<*(jankali.subdued[i]);
     }
-    os <<"Traps ";
+    os <<"Traps "<<endl;
     for (unsigned int i=0;i<jankali.traps.size();i++){
         os<<(jankali.traps[i]);
     }
+    
     return os;
 }

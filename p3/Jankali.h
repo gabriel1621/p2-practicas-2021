@@ -1,3 +1,4 @@
+//DNI 48775081Q, Gabriel Pardo
 #ifndef _Jankali_h
 #define _Jankali_h
 #include "Betonski.h"
@@ -13,7 +14,7 @@ class Jankali{
         string name;
         int power;
         vector <Coordinate> traps;
-        vector <Betonski> subdued;
+        vector <Betonski*> subdued;
     public:
         Jankali( string name);
         string getName() const;

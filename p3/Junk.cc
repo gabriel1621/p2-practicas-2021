@@ -1,3 +1,4 @@
+//DNI 48775081Q, Gabriel Pardo
 #include "Junk.h"
 
 
@@ -95,7 +96,7 @@ string Junk::conversion(JunkType type) const{
 }
 ostream& operator<<(ostream &os, const Junk &junk){
     JunkType tipo=junk.getType();
-    os<< "[" << junk.conversion(tipo) << ':' << junk.getQuantity() << ']' << endl;
+    os<< "[" << junk.conversion(tipo) << ':' << junk.getQuantity() << ']';
 
     return os;
 }

@@ -1,3 +1,4 @@
+//DNI 48775081Q, Gabriel Pardo
 #ifndef _Betonski_h
 #define _Betonski_h
 #include "Coordinate.h"
@@ -19,7 +20,7 @@ class Betonski{
         Betonski(string name);
         string getName() const{return name;}
         int getAnger() const{return anger;}
-        bool isCaptured() const{return captured;}
+        bool isCaptured() const;
         Coordinate getPosition() const;
         void capture();
         void setPosition(const Coordinate &coord);

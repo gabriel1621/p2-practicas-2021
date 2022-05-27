@@ -1,3 +1,4 @@
+//DNI 48775081Q, Gabriel Pardo
 #include "Betonski.h"
 #include <string.h>
 #include "Util.h"
@@ -15,6 +16,9 @@ Betonski::Betonski(string name){
         Coordinate position;
     }
 
+}
+bool Betonski::isCaptured() const{
+    return captured;
 }
 Coordinate Betonski::getPosition() const{
     return position;
@@ -46,12 +50,12 @@ int Betonski::calculateValue(JunkType type) const{
 }
 int Betonski::spoliation(){
     
-    if (isCaptured()==false){
+    if (captured==false){
         throw BETONSKI_NOT_CAPTURED;
     }
     else{
         int spoli=calculateValue()+anger;
-
+        int valor=calculateValue(); 
         if(spoli>5000){
             anger=0;
             captured=false;
@@ -60,19 +64,17 @@ int Betonski::spoliation(){
         }
         else{
             anger=anger+calculateValue();
-            for (int i=bag.size();i>0;--i){
-                bag.erase(bag.begin()+i);
-            }
+            bag.clear();
             
         }
-        return calculateValue();
+        return valor;
     }
     
 
 }
 int Betonski::spoliation(JunkType type){
     
-    if (isCaptured()==false){
+    if (captured==false){
         throw BETONSKI_NOT_CAPTURED;
     }
     else{
